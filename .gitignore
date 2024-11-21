@@ -361,3 +361,6 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/CheeseBurger/CheeseBurger.vcxproj
+/CheeseBurger/CheeseBurger.vcxproj.filters
+/CheeseBurger/GameObject.h
