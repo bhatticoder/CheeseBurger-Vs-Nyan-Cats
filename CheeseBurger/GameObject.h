@@ -18,7 +18,7 @@ public:
     // Virtual functions
     virtual void move(char direction) = 0;
     virtual void draw() = 0; 
-    // virtual void collide(GameObject* other) = 0; 
+    //virtual void collide(GameObject* other) = 0;
 };
 
 //// Derived class

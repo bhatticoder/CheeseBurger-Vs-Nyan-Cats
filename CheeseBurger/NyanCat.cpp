@@ -1,15 +1,22 @@
 #include "NyanCat.h"
-#include <iostream>
-using namespace std;
+#include <cstdlib>  // For rand() and srand()
+#include <ctime>    // For time()
 
 Nyancat::Nyancat(int startRow, int startCol, int speed, int level)
-    : GameObject(startRow, startCol, 40, 60), fallingspeed(speed), isvisible(true), level(level) {
-    row = -1; // Start above the grid
-    col = startCol; // Start at the given column
-    playerCol = startCol / 2;  // Initial player position, separate from Nyan Cat
+    : GameObject(startRow, startCol, rows, cols), fallingspeed(speed), playerCol(startCol), isvisible(true), level(level) {
+    initializeCats();  // Initialize the cats when the Nyancat object is created
 }
 
-// Move the player left or right based on user input
+// Initialize multiple Nyan Cats with random positions
+void Nyancat::initializeCats() {
+    srand(static_cast<unsigned int>(time(0)));  // Seed for random number generation
+    for (int i = 0; i < maxCats; ++i) {
+        cats[i].row = -1;  // Start above the grid
+        cats[i].col = rand() % (cols - 2) + 1;  // Random column within bounds
+    }
+}
+
+// Player movement
 void Nyancat::move(char direction) {
     if (direction == 'a' || direction == 'A') {
         if (playerCol > 1) {  // Ensure player does not move out of bounds
@@ -23,39 +30,57 @@ void Nyancat::move(char direction) {
     }
 }
 
-// Nyan Cat falling logic (Nyan Cat moves down automatically)
+// Update falling position of all Nyan Cats
 void Nyancat::fall() {
-    if (isvisible) {
-        row += fallingspeed; // Move down by falling speed
-        if (row >= rows - 1) {
-            row = -1;  // Reset Nyan Cat to start from above
-            col = cols / 2;  // Start at the middle of the grid
-            isvisible = true;
+    for (int i = 0; i < maxCats; ++i) {
+        cats[i].row += fallingspeed;  // Move each cat down by its falling speed
+        if (cats[i].row >= rows - 1) {  // If a cat reaches the bottom
+            cats[i].row = -1;           // Reset it to start from above
+            cats[i].col = rand() % (cols - 2) + 1;  // Assign a new random column
         }
     }
 }
 
-// Draw the game grid and objects (player and Nyan Cat)
+// Draw the entire grid (boundaries, player, and Nyan Cats)
 void Nyancat::draw() {
     for (int i = 0; i < rows; ++i) {
         for (int j = 0; j < cols; ++j) {
             // Draw boundaries
-            if (i == 0 || i == rows - 1) {  // Top and bottom borders
-                cout << "=";  // Horizontal boundary
+            if (i == 0 || i == rows - 1) {
+                std::cout << "=";  // Horizontal boundary
             }
-            else if (j == 0 || j == cols - 1) {  // Left and right borders
-                cout << "||";  // Vertical boundary
+            else if (j == 0 || j == cols - 1) {
+                std::cout << "||";  // Vertical boundary
             }
-            else if (i == rows - 2 && j == playerCol) {  // Player at the bottom center
-                cout << "P";  // Player character
+            else if (i == row - 6) {
+                std::cout << "-";
             }
-            else if (i == row && j == col) {  // Draw Nyan Cat
-                cout << "N";  // Represent Nyan Cat as 'N'
+            else if (i == rows - 2 && j == playerCol) {
+                std::cout << "P";  // Player character
             }
             else {
-                cout << " "; // Empty space
+                bool isCatHere = false;
+                for (int k = 0; k < maxCats; ++k) {
+                    if (i == cats[k].row && j == cats[k].col) {
+                        std::cout << "N";  // Represent Nyan Cat as 'N'
+                        isCatHere = true;
+                        break;
+                    }
+                }
+                if (!isCatHere) {
+                    std::cout << " ";  // Empty space
+                }
             }
         }
-        cout << endl;
+        std::cout << std::endl;
     }
+}
+
+// Getter methods (optional)
+int Nyancat::getRow() const {
+    return -1;  // Not applicable for the entire grid
+}
+
+int Nyancat::getPlayerCol() const {
+    return playerCol;
 }
