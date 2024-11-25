@@ -5,7 +5,7 @@
 #include <conio.h> 
 using namespace std;
 int main() {
-    const int gridRows = 40, gridCols = 60;  
+    const int gridRows = 30, gridCols = 60;  
     Nyancat nyanCat(-1, gridCols / 2, 1, 1); 
     nyanCat.initializeCats(); 
     char input;
@@ -20,7 +20,7 @@ int main() {
             }
             nyanCat.move(input);  
         }
-        this_thread::sleep_for(chrono::milliseconds(100));  
+        this_thread::sleep_for(chrono::milliseconds(30));  
     }
     cout << "Game Over!" << endl;
     return 0;

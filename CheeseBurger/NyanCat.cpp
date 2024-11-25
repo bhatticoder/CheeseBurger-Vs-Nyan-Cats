@@ -52,11 +52,10 @@ void Nyancat::draw() {
             else if (j == 0 || j == cols - 1) {
                 std::cout << "||";  // Vertical boundary
             }
-            else if (i == row - 6) {
-                std::cout << "-";
-            }
-            else if (i == rows - 2 && j == playerCol) {
-                std::cout << "P";  // Player character
+            else if (i == rows - 2 && j >= playerCol && j < playerCol + 4) {  // Burger shape for the player
+                if (j == playerCol) std::cout << "(";  // Left side of the burger
+                else if (j == playerCol + 3) std::cout << ")";  // Right side of the burger
+                else std::cout << "=";  // Middle part of the burger
             }
             else {
                 bool isCatHere = false;
