@@ -1,20 +1,25 @@
+#include "NyanCat.h"
 #include <iostream>
-#include <conio.h>  // For _getch()
-#include "GameObject.h"  // Include the GameObject header
+#include <thread>
+#include <chrono>
+#include <conio.h> 
 using namespace std;
 int main() {
-    const int mapRows = 40;  // Define the number of rows for the map
-    const int mapCols = 60;  // Define the number of columns for the map
-    GameObject player(20, 30, mapRows, mapCols);  // Create the player at position (20, 30) on a 40x60 grid
-    char direction;
+    char input;
+    const int gridRows = 40, gridCols = 60;
+    Nyancat nyanCat(-1, gridCols / 2, 1, 1); 
     while (true) {
-        system("cls");  // Clear the screen to redraw the map (for Windows)
-        player.draw();  // Draw the map with the player's current position
-        direction = _getch();  // Get user input
-        if (direction == 'q' || direction == 'Q') {
-            break;  // Exit the loop if the user presses 'q'
+        system("cls"); 
+        nyanCat.draw();
+        nyanCat.fall();
+        if (_kbhit()) {
+            input = _getch(); // Read the key press
+            if (input == 'q' || input == 'Q') {
+                break; // Quit the game if 'q' is pressed
+            }
+            nyanCat.move(input);
         }
-        player.move(direction);  // Move player according to direction
+        this_thread::sleep_for(chrono::milliseconds(200));
     }
     cout << "Game Over!" << endl;
     return 0;
