@@ -1,82 +1,32 @@
 #ifndef NYANCAT_H
 #define NYANCAT_H
-
 #include "GameObject.h"
+#include "Cheeseburger.h"
 #include <iostream>
-
 class Nyancat : public GameObject {
 private:
     struct Cat {
         int row;
         int col;
     };
-
-    static const int maxCats = 3;  // Maximum number of cats allowed
-    Cat cats[maxCats];            // Array to store multiple Nyan Cats
-
-    int fallingspeed;             // Falling speed of the cats
-    int playerCol;                // Player's current column
-    bool isvisible;               // Visibility of the player (if needed)
-    int level;                    // Game level
-
+    static const int maxCats = 3;
+    Cat cats[maxCats];          
+    int falling_speed;           
+    int player_col;              
+    bool isvisible;              
+    int level;
+    int playerLives;
 public:
     Nyancat(int startRow, int startCol, int speed, int level);
-
-    // Initialize multiple Nyan Cats with random positions
     void initializeCats();
-
-    // Player movement
-    void move(char direction);
-
-    // Update falling position of all Nyan Cats
+    void move(char direction) override;
+    void collide(GameObject* collideobject);
+    void draw() override;
     void fall();
-
-    // Draw the entire grid (boundaries, player, and Nyan Cats)
-    void draw();
-
-    // Getter methods (optional, if needed)
-    int getRow() const;          // Get player's row
-    int getPlayerCol() const;    // Get player's column
-    static const int cols = 60;  // Grid columns (you can adjust based on your game setup)
-    static const int rows = 40;  // Grid rows (you can adjust based on your game setup)
+    int getRow() const;    
+    int getPlayerCol() const;
+    int getLives()const;
+    static const int cols = 60; 
+    static const int rows = 40;  
 };
-
 #endif
-
-
-
-
-//// advance nyan cat variants
-//class Super_nyancat : public Nyancat
-//{
-//public:
-//	Super_nyancat(int x, int y, int speed);
-//	void fall() override;
-//	void move() override;
-//};
-//
-//class Mega_nyancat : public Nyancat
-//{
-//public:
-//	Mega_nyancat(int x, int y, int speed);
-//	void fall() override;
-//	void move() override;
-//};
-
-
-//// advance nyan cat variants
-//class Super_nyancat : public Nyancat
-//{
-//public:
-//	Super_nyancat(int x, int y, int speed);
-//	void fall() override;
-//	void move() override;
-//};
-//
-//class Mega_nyancat : public Nyancat
-//{
-//public:
-//	Mega_nyancat(int x, int y, int speed);
-//	void fall() override;
-//	void move() override;
-//};
