@@ -27,13 +27,14 @@ void Cheeseburger::activate_powerup(int type) {
         break;
     }
 }
-void Cheeseburger::updateScore(int points) {
-    score += points;
-}
-// Define the << operator to print the score
+// Cheeseburger class's operator<< overload (if it's updating score)
 std::ostream& operator<<(std::ostream& os, const Cheeseburger& burger) {
-    os << "Score: " << burger.score;
+    os << "Score: " << burger.getScore();
     return os;
+}
+void Cheeseburger::updateScore(int increment) {
+    score += increment;
+    std::cout << "Score Updated: " << score << std::endl;
 }
 void Cheeseburger::collide(GameObject* collideobject) {
     cout << "Colliding:";

@@ -11,9 +11,9 @@ public:
     // Methods for handling Nyan Cat behavior
     void initializeCats();          // Initialize Nyan Cats
     void fall();                    // Make Nyan Cats fall
-    void move(char direction);      // Move player
-    void collide(GameObject* collideobject); // Handle collision
-    void draw();                    // Draw player and Nyan Cats on screen
+    void move(char direction)override;      // Move player
+    void collide(GameObject* collideobject)override; // Handle collision
+    void draw()override;                    // Draw player and Nyan Cats on screen
     // Getter methods
     int getLives() const;           // Get player lives
     int getRow() const;             // Get player row (not used in this context)
