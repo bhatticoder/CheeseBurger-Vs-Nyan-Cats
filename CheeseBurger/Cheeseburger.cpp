@@ -4,7 +4,7 @@
 using namespace std;
 // Constructor
 Cheeseburger::Cheeseburger(int x, int y, int speed, int lives)
-    : GameObject(x, y, 4, 2), score(0), lives(lives), speed(speed) {
+    : GameObject(x, y, 4, 2), score(0), lives(3), speed(speed) {
     this->x = x; // Initialize inherited member variable for x-coordinate
     this->y = y;
 }
