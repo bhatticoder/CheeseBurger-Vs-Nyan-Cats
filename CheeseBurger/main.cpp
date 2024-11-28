@@ -33,7 +33,7 @@ int main() {
             break;
         }
         default:
-            cout << "Invalid choice. Please choose a valid option (1-3)." << endl;
+            cout << "Invalid choice. Please choose a valid option (1-4)." << endl;
             break;
         }
     }
@@ -46,7 +46,6 @@ void credits() {
     cout << "Abdul Rafay.\t\t Roll# 23F-0591 " << endl;
     cout << "Press any key to return to the menu..." << endl;
     cout << "================================================" << endl;
-    _getch();
 }
 void displayMenu() {
     cout << "==========================" << endl;
@@ -56,7 +55,7 @@ void displayMenu() {
     cout << "2. Instructions" << endl;
     cout << "3. Credits" << endl;
     cout << "4. Quit" << endl;
-    cout << "Enter your choice (1-3): ";
+    cout << "Enter your choice (1-4): ";
 }
 void showInstructions() {
     cout << "\nInstructions:" << endl;
@@ -67,28 +66,29 @@ void showInstructions() {
     cout << "4. You start with 3 lives, which decrease on collisions." << endl;
     cout << "Press any key to return to the menu..." << endl;
     cout << "==========================================================================" << endl;
-    _getch();  // Wait for user to press a key
 }
 void start() {
     const int gridRows = 20, gridCols = 60;
-    Nyancat nyanCat(-1, gridCols / 2, 1, 1);
+    Cheeseburger burger(0, gridCols / 2, 1, 3); // Initialize Cheeseburger
+    Nyancat nyanCat(-1,gridCols / 2, 1, 1,&burger); // Pass Cheeseburger to Nyancat
     nyanCat.initializeCats();
     char input;
     while (nyanCat.getLives() > 0) {
         system("cls");
-        nyanCat.draw();  // Draw the grid
-        nyanCat.fall();  // Update Nyancat falling positions
-        nyanCat.collide(nullptr);  // Pass nullptr as no other game objects are involved
-        cout << "Lives remaining: " << nyanCat.getLives() << endl;
+        nyanCat.draw();          // Draw the grid
+        nyanCat.fall();          // Update Nyancat falling positions
+        nyanCat.collide(nullptr); // Handle collisions (if applicable)
+        // Print player lives and score
+        std::cout << "Lives remaining: " << nyanCat.getLives() << std::endl;
+        std::cout << burger << std::endl; // Use overloaded << to print score
         if (_kbhit()) {
             input = _getch();
             if (input == 'q' || input == 'Q') {
-                gameRunning = false;  // Exit the game loop
-                break;
+                break; // Exit the game loop
             }
-            nyanCat.move(input);  // Move Nyancat based on user input
+            nyanCat.move(input); // Move player based on input
         }
-        this_thread::sleep_for(chrono::milliseconds(30));  // Slow down the game loop
+        std::this_thread::sleep_for(std::chrono::milliseconds(100)); // Slow down the game loop
     }
-    cout << "Game Over!" << endl;
+    std::cout << "Game Over!" << std::endl;
 }

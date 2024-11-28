@@ -1,23 +1,81 @@
-#include "NyanCat.h"
-#include <cstdlib>  
-#include <ctime>  
-Nyancat::Nyancat(int startRow, int startCol, int speed, int level)
-    : GameObject(startRow, startCol, rows, cols), playerLives(1), falling_speed(speed), player_col(startCol), isvisible(true), level(level) {
-    initializeCats(); 
+#include "Nyancat.h"
+#include <cstdlib>
+#include <ctime>
+#include <iostream>
+
+Nyancat::Nyancat(int startRow, int startCol, int speed, int level, Cheeseburger* burger)
+    : GameObject(startRow, startCol, rows, cols), falling_speed(speed), level(level),
+    playerLives(3), player_col(startCol), burger(burger), superNyanSpawned(false), superNyanMoved(0) {
+    initializeCats();
 }
+
 void Nyancat::initializeCats() {
-    srand(static_cast<unsigned int>(time(0)));
+    srand(static_cast<unsigned int>(time(0))); // Initialize random seed
     for (int i = 0; i < maxCats; ++i) {
-        cats[i].row = -1; 
-        cats[i].col = rand() % (cols - 2) + 1; 
+        cats[i].row = -1; // Offscreen
+        cats[i].col = rand() % (cols - 2) + 1; // Random column
+    }
+}
+
+void Nyancat::fall() {
+    // Check if score is high enough to spawn Super Nyan
+    if (burger && burger->getScore() >= 50 && !superNyanSpawned) {
+        // Spawn Super Nyan and make it move twice as fast
+        superNyanSpawned = true;
+        superNyanMoved = 0; // Reset movement count
+        std::cout << "Super Nyan has spawned! You have reached Level 2!" << std::endl;
+        std::cout << "The falling speed of Nyan Cats has increased!" << std::endl;
+        falling_speed *= 2; // Double the falling speed after reaching level 2
+        // Increase player's lives by 1 when Level 2 is reached
+        playerLives++;
+        std::cout << "Player lives increased to: " << playerLives << std::endl;
+    }
+
+    // Move the Nyan Cats or Super Nyan based on the condition
+    for (int i = 0; i < maxCats; ++i) {
+        if (superNyanSpawned && superNyanMoved < 2) {
+            // Super Nyan moves twice as fast
+            cats[i].row += falling_speed * 2;
+            superNyanMoved++;
+        }
+        else {
+            // Regular Nyan Cats
+            cats[i].row += falling_speed;
+        }
+
+        if (cats[i].row >= rows - 1) { // Reset cat if it reaches the bottom
+            cats[i].row = -1;
+            cats[i].col = rand() % (cols - 2) + 1;
+            if (burger) {
+                burger->updateScore(10);
+            }
+        }
+    }
+}
+void Nyancat::move(char direction) {
+    if (direction == 'a' || direction == 'A') {
+        if (player_col > 1) player_col--;
+    }
+    else if (direction == 'd' || direction == 'D') {
+        if (player_col < cols - 4) player_col++;
     }
 }
 void Nyancat::collide(GameObject* collideobject) {
-    // Check if collideobject is a Cheeseburger (player) and check the positions
     for (int i = 0; i < maxCats; ++i) {
-        if (cats[i].row == rows - 2 && cats[i].col >= player_col && cats[i].col < player_col + 4) {
-            playerLives--;  // Decrease player's lives
-            std::cout << "A Nyancat collided with the player! Lives remaining: " << playerLives << std::endl;
+        // Check if we are dealing with Super Nyan
+        bool isSuperNyan = (superNyanSpawned && cats[i].row == rows - 2 && cats[i].col >= player_col && cats[i].col < player_col + 4);
+        // Check for collision with regular Nyan Cats
+        bool isRegularCat = (cats[i].row == rows - 2 && cats[i].col >= player_col && cats[i].col < player_col + 4);
+        // Check collision with Super Nyan or Regular Nyan Cats
+        if (isSuperNyan || isRegularCat) {
+            // Output the collision result based on the type of Nyan
+            if (isSuperNyan) {
+                std::cout << "Oh no! Super Nyan collided!" << std::endl;
+            }
+            else {
+                std::cout << "Oh no! Nyan Cat collided!" << std::endl;
+            }
+            playerLives--; // Decrease player lives for both types of Nyan
             if (playerLives <= 0) {
                 std::cout << "Game Over! The player is out of lives!" << std::endl;
                 return;
@@ -25,68 +83,42 @@ void Nyancat::collide(GameObject* collideobject) {
         }
     }
 }
-void Nyancat::move(char direction) {
-    if (direction == 'a' || direction == 'A') {
-        if (player_col > 1) {  // Ensure player does not move out of bounds
-            player_col -= 1;
-        }
-    }
-    else if (direction == 'd' || direction == 'D') {
-        if (player_col < cols - 2) {  // Ensure player does not move out of bounds
-            player_col += 1;
-        }
-    }
-}
-// Update falling position of all Nyan Cats
-void Nyancat::fall() {
-    for (int i = 0; i < maxCats; ++i) {
-        cats[i].row += falling_speed;  // Move each cat down by its falling speed
-        if (cats[i].row >= rows - 1) {  // If a cat reaches the bottom
-            cats[i].row = -1;           // Reset it to start from above
-            cats[i].col = rand() % (cols - 2) + 1;  // Assign a new random column
-        }
-    }
-}
-// Draw the entire grid (boundaries, player, and Nyan Cats)
 void Nyancat::draw() {
     for (int i = 0; i < rows; ++i) {
         for (int j = 0; j < cols; ++j) {
-            // Draw boundaries
-            if (i == 0 || i == rows - 1) {
-                std::cout << "=";  // Horizontal boundary
-            }
-            else if (j == 0 || j == cols - 1) {
-                std::cout << "||";  // Vertical boundary
-            }
-            else if (i == rows - 2 && j >= player_col && j < player_col + 4) {  // Burger shape for the player
-                if (j == player_col) std::cout << "(";  // Left side of the burger
-                else if (j == player_col + 3) std::cout << ")";  // Right side of the burger
-                else std::cout << "=";  // Middle part of the burger
+            if (i == rows - 2 && j >= player_col && j < player_col + 4) {
+                std::cout << "="; // Draw player
             }
             else {
                 bool isCatHere = false;
                 for (int k = 0; k < maxCats; ++k) {
-                    if (i == cats[k].row && j == cats[k].col) {
-                        std::cout << "N";  // Represent Nyan Cat as 'N'
+                    if (cats[k].row == i && cats[k].col == j) {
+                        if (superNyanSpawned && superNyanMoved < 2) {
+                            std::cout << "S"; // Draw Super Nyan
+                        }
+                        else {
+                            std::cout << "N"; // Draw regular Nyan Cat
+                        }
                         isCatHere = true;
                         break;
                     }
                 }
-                if (!isCatHere) {
-                    std::cout << " ";  // Empty space
-                }
+                if (!isCatHere) std::cout << " "; // Empty space
             }
         }
         std::cout << std::endl;
     }
 }
-// Getter methods (optional)
-int Nyancat::getRow() const {
-    return -1;  // Not applicable for the entire grid
-}
-int Nyancat::getPlayerCol() const {
-    return player_col;
-}
+
 int Nyancat::getLives() const {
     return playerLives;
 }
+
+int Nyancat::getRow() const {
+    return -1;
+}
+
+int Nyancat::getPlayerCol() const {
+    return player_col;
+}
+
