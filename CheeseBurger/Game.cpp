@@ -5,7 +5,7 @@
 #include <thread>     // For std::this_thread::sleep_for
 #include <chrono>     // For std::chrono::milliseconds
 const int gridCols = 20; // Set this to the appropriate value
-Game::Game() : easyHighScore(0), mediumHighScore(0),hardHighScore(0) {
+Game::Game() : easyHighScore(0), mediumHighScore(0), hardHighScore(0) {
     // Additional initialization if needed
 }
 void Game::displayMainMenu() {
@@ -72,7 +72,7 @@ void Game::displayCredits() {
     std::cin.get();  // Wait for user input
 }
 void Game::startGame(int mode) {
-    Cheeseburger burger(-1,0, gridCols / 2, 1, 3);  // Initialize Cheeseburger (player)
+    Cheeseburger burger(-1, 0, gridCols / 2, 1, 3);  // Initialize Cheeseburger (player)
     NyanCat* nyanCat = nullptr;
 
     if (mode == 1) {

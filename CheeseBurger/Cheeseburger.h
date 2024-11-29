@@ -7,7 +7,7 @@ class Cheeseburger :public GameObject
 	int speed;
 	int player_col;
 public:
-	Cheeseburger(int x, int y, int speed, int lives,int startCol);
+	Cheeseburger(int x, int y, int speed, int lives, int startCol);
 	bool collide(GameObject* collideobject)override;
 	void activate_powerup(int type);
 	void updateScore(int points);

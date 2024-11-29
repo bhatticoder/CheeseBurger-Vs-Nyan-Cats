@@ -38,7 +38,7 @@ void Cheeseburger::updateScore(int increment) {
 }
 bool Cheeseburger::collide(GameObject* collideobject) {
     if (collideobject) {
-        lives -= 1; 
+        lives -= 1;
         std::cout << "Collision detected! Lives remaining: " << lives << std::endl;
     }
     if (lives <= 0) {

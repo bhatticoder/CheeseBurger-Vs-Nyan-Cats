@@ -64,7 +64,7 @@ bool RegularNyanCat::collide(GameObject* collideobject) {
                     burger->collide(this); // Trigger cheeseburger's collision logic
                 }
             }\
-            cats[i].row = -1; // Start falling again from the top
+                cats[i].row = -1; // Start falling again from the top
         }
     }
     return false; // Default return value for no collision
@@ -78,7 +78,7 @@ void RegularNyanCat::draw() {
             else {
                 bool isCatHere = false;
                 for (int k = 0; k < maxCats; ++k) {
-                    if (cats[k].row == i && cats[k].col == j) {                                          
+                    if (cats[k].row == i && cats[k].col == j) {
                         std::cout << "N";
                         isCatHere = true;
                         break;
@@ -197,7 +197,7 @@ bool MegaNyanCat::collide(GameObject* collideobject) {
             }
             // Reset the cat to the top after collision
             cats[i].row = -1; // Start falling again from the top
-            cats[i].col = rand() % (cols - 2) + 1; 
+            cats[i].col = rand() % (cols - 2) + 1;
         }
     }
     teleport();
