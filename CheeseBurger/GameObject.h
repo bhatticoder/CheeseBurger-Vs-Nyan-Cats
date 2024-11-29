@@ -16,7 +16,7 @@ public:
     GameObject(int startRow, int startCol, int rows, int cols);
     virtual void move(char direction) = 0;
     virtual void draw() = 0;
-    virtual void collide(GameObject* other) = 0;
+    virtual bool collide(GameObject* other) = 0;
     // Add getter methods
     int getX() const { return x; }
     int getY() const { return y; }

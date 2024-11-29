@@ -3,8 +3,8 @@
 #include <iostream>
 using namespace std;
 // Constructor
-Cheeseburger::Cheeseburger(int x, int y, int speed, int lives)
-    : GameObject(x, y, 4, 2), score(0), lives(3), speed(speed) {
+Cheeseburger::Cheeseburger(int x, int y, int speed, int lives, int startCol)
+    : GameObject(x, y, 4, 2), score(0), lives(3), speed(speed), player_col(startCol) {
     this->x = x; // Initialize inherited member variable for x-coordinate
     this->y = y;
 }
@@ -36,8 +36,16 @@ void Cheeseburger::updateScore(int increment) {
     score += increment;
     std::cout << "Score Updated: " << score << std::endl;
 }
-void Cheeseburger::collide(GameObject* collideobject) {
-    cout << "Colliding:";
+bool Cheeseburger::collide(GameObject* collideobject) {
+    if (collideobject) {
+        lives -= 1; 
+        std::cout << "Collision detected! Lives remaining: " << lives << std::endl;
+    }
+    if (lives <= 0) {
+        std::cout << "Game Over!" << std::endl;
+        return true;
+    }
+    return false;
 }
 int Cheeseburger::getLives() const {
     return lives;
@@ -49,8 +57,13 @@ int Cheeseburger::getSpeed()const {
     return speed;
 }
 void Cheeseburger::move(char direction) {
-    cout << "Moving Player";
+    if (direction == 'a' || direction == 'A') {
+        if (player_col > 1) player_col--;
+    }
+    else if (direction == 'd' || direction == 'D') {
+        if (player_col < cols - 4) player_col++;
+    }
 }
 void Cheeseburger::draw() {
-    std::cout << "Drawing Cheeseburger at (" << x << ", " << y << ")" << std::endl;
+    cout << "=";
 }

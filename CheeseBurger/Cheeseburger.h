@@ -5,9 +5,10 @@ class Cheeseburger :public GameObject
 	int score;
 	int lives;
 	int speed;
+	int player_col;
 public:
-	Cheeseburger(int x, int y, int speed, int lives);
-	void collide(GameObject* collideobject)override;
+	Cheeseburger(int x, int y, int speed, int lives,int startCol);
+	bool collide(GameObject* collideobject)override;
 	void activate_powerup(int type);
 	void updateScore(int points);
 	void draw()override;

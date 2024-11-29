@@ -72,7 +72,7 @@ void Game::displayCredits() {
     std::cin.get();  // Wait for user input
 }
 void Game::startGame(int mode) {
-    Cheeseburger burger(0, gridCols / 2, 1, 3);  // Initialize Cheeseburger (player)
+    Cheeseburger burger(-1,0, gridCols / 2, 1, 3);  // Initialize Cheeseburger (player)
     NyanCat* nyanCat = nullptr;
 
     if (mode == 1) {
@@ -90,15 +90,14 @@ void Game::startGame(int mode) {
 
     nyanCat->initializeCats();  // Initialize the falling cats
     char input;
-    while (nyanCat->getLives() > 0) {
+    while (burger.getLives() > 0) {
         system("cls");
         nyanCat->draw();
         nyanCat->fall();
-        nyanCat->collide(nullptr);
+        nyanCat->collide(&burger);
         // Display player lives and score
-        std::cout << "Lives remaining: " << nyanCat->getLives() << std::endl;
+        std::cout << "Lives remaining: " << burger.getLives() << std::endl;
         std::cout << burger << std::endl;
-
         if (_kbhit()) {
             input = _getch();
             if (input == 'q' || input == 'Q') {
@@ -125,7 +124,7 @@ void Game::startGame(int mode) {
     else if (mode == 3) {
         if (burger.getScore() > hardHighScore) {
             hardHighScore = burger.getScore();
-            std::cout << "New Medium Mode High Score: " << hardHighScore << "!\n";
+            std::cout << "New Hard Mode High Score: " << hardHighScore << "!\n";
         }
     }
     std::cout << "Game Over!" << std::endl;
