@@ -6,6 +6,7 @@ class Game {
 private:
     int easyHighScore;   // High score for Easy mode
     int mediumHighScore; // High score for Medium mode
+    int hardHighScore;
 public:
     Game(); // Constructor
     void run(); // Main game loop
@@ -14,7 +15,7 @@ public:
     void displayInstructions();
     void displayHighScores();
     void displayCredits();
-    void startGame(bool isHardMode);
+    void startGame(int mode);
 };
 
 #endif

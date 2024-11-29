@@ -5,10 +5,9 @@
 #include <thread>     // For std::this_thread::sleep_for
 #include <chrono>     // For std::chrono::milliseconds
 const int gridCols = 20; // Set this to the appropriate value
-Game::Game() : easyHighScore(0), mediumHighScore(0) {
+Game::Game() : easyHighScore(0), mediumHighScore(0),hardHighScore(0) {
     // Additional initialization if needed
 }
-
 void Game::displayMainMenu() {
     system("cls");  // Clear the screen
     std::cout << "=============================\n";
@@ -28,7 +27,8 @@ void Game::displayLevelMenu() {
     std::cout << "=============================\n";
     std::cout << "1. Easy Mode (Regular Nyan Cats)\n";
     std::cout << "2. Medium Mode (Super Nyan Cats)\n";
-    std::cout << "3. Back to Main Menu\n";
+    std::cout << "3. Mega Mode (Mega Nyan Cats)\n";  // New Mega Mode
+    std::cout << "4. Back to Main Menu\n";
     std::cout << "Select your option: ";
 }
 void Game::displayInstructions() {
@@ -52,6 +52,7 @@ void Game::displayHighScores() {
     std::cout << "=============================\n";
     std::cout << "1. Easy Mode High Score: " << easyHighScore << "\n";
     std::cout << "2. Medium Mode High Score: " << mediumHighScore << "\n";
+    std::cout << "3. Hard Mode High Score:" << hardHighScore << "\n";
     std::cout << "=============================\n";
     std::cout << "Press Enter to return to the main menu...";
     std::cin.ignore();
@@ -70,27 +71,30 @@ void Game::displayCredits() {
     std::cin.ignore();
     std::cin.get();  // Wait for user input
 }
-void Game::startGame(bool isHardMode) {
+void Game::startGame(int mode) {
     Cheeseburger burger(0, gridCols / 2, 1, 3);  // Initialize Cheeseburger (player)
     NyanCat* nyanCat = nullptr;
-    if (isHardMode) {
-        nyanCat = new SuperNyanCat(-1, gridCols / 2, 1, &burger);  // Hard mode
-        std::cout << "Medium mode selected! Super Nyan Cats are active.\n";
-    }
-    else {
+
+    if (mode == 1) {
         nyanCat = new RegularNyanCat(-1, gridCols / 2, 1, &burger);  // Easy mode
         std::cout << "Easy mode selected! Regular Nyan Cats are active.\n";
+    }
+    else if (mode == 2) {
+        nyanCat = new SuperNyanCat(-1, gridCols / 2, 1, &burger);  // Medium mode
+        std::cout << "Medium mode selected! Super Nyan Cats are active.\n";
+    }
+    else if (mode == 3) {
+        nyanCat = new MegaNyanCat(-1, gridCols / 2, 1, &burger);  // Mega mode
+        std::cout << "Mega mode selected! Mega Nyan Cats are active.\n";
     }
 
     nyanCat->initializeCats();  // Initialize the falling cats
     char input;
-
     while (nyanCat->getLives() > 0) {
         system("cls");
         nyanCat->draw();
         nyanCat->fall();
         nyanCat->collide(nullptr);
-
         // Display player lives and score
         std::cout << "Lives remaining: " << nyanCat->getLives() << std::endl;
         std::cout << burger << std::endl;
@@ -102,29 +106,32 @@ void Game::startGame(bool isHardMode) {
             }
             nyanCat->move(input);
         }
-
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 
     // Update the corresponding high score
-    if (isHardMode) {
-        if (burger.getScore() > mediumHighScore) {
-            mediumHighScore = burger.getScore();
-            std::cout << "New Medium Mode High Score: " << mediumHighScore << "!\n";
-        }
-    }
-    else {
+    if (mode == 1) {
         if (burger.getScore() > easyHighScore) {
             easyHighScore = burger.getScore();
             std::cout << "New Easy Mode High Score: " << easyHighScore << "!\n";
         }
     }
-
+    else if (mode == 2) {
+        if (burger.getScore() > mediumHighScore) {
+            mediumHighScore = burger.getScore();
+            std::cout << "New Medium Mode High Score: " << mediumHighScore << "!\n";
+        }
+    }
+    else if (mode == 3) {
+        if (burger.getScore() > hardHighScore) {
+            hardHighScore = burger.getScore();
+            std::cout << "New Medium Mode High Score: " << hardHighScore << "!\n";
+        }
+    }
     std::cout << "Game Over!" << std::endl;
     delete nyanCat;  // Free memory
     std::this_thread::sleep_for(std::chrono::seconds(2));
 }
-
 void Game::run() {
     int mainChoice = 0;
     while (true) {
@@ -136,14 +143,18 @@ void Game::run() {
                 displayLevelMenu();
                 std::cin >> levelChoice;
                 if (levelChoice == 1) {
-                    startGame(false);  // Easy mode
+                    startGame(1);  // Easy mode
                     break;
                 }
                 else if (levelChoice == 2) {
-                    startGame(true);  // Hard mode
+                    startGame(2);  // Medium mode
                     break;
                 }
                 else if (levelChoice == 3) {
+                    startGame(3);  // Mega mode
+                    break;
+                }
+                else if (levelChoice == 4) {
                     break;  // Back to main menu
                 }
                 else {

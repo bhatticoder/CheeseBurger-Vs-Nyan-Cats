@@ -43,7 +43,15 @@ public:
     void draw()override;
     void move(char direction)override;
     void collide(GameObject* collideobject) override;
+};
+class MegaNyanCat :public NyanCat {
+public:
+    MegaNyanCat(int startRow, int startCol, int speed, Cheeseburger* burger);
+    void fall()override;
+    void move()override;
+    void draw()override;
+    void move(char direction)override;
+    void collide(GameObject* collideobject) override;
     void teleport();
 };
-
 #endif  // NYANCAT_H
