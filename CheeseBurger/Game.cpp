@@ -5,8 +5,9 @@
 #include <thread>     // For std::this_thread::sleep_for
 #include <chrono>     // For std::chrono::milliseconds
 const int gridCols = 20; // Set this to the appropriate value
-Game::Game() : easyHighScore(0), mediumHighScore(0), hardHighScore(0) {
-    // Additional initialization if needed
+Game::Game() : easyHighScore(0), mediumHighScore(0), hardHighScore(0){}
+Game::~Game() {
+
 }
 void Game::displayMainMenu() {
     system("cls");  // Clear the screen
@@ -72,9 +73,9 @@ void Game::displayCredits() {
     std::cin.get();  // Wait for user input
 }
 void Game::startGame(int mode) {
-    Cheeseburger burger(-1, 0, gridCols / 2, 1, 3);  // Initialize Cheeseburger (player)
+    Cheeseburger burger(-1, 0, gridCols / 2, 1, 3); // Initialize Cheeseburger (player)
+    //burger = new Cheeseburger(-1, 0, gridCols / 2, 1, 3);
     NyanCat* nyanCat = nullptr;
-
     if (mode == 1) {
         nyanCat = new RegularNyanCat(-1, gridCols / 2, 1, &burger);  // Easy mode
         std::cout << "Easy mode selected! Regular Nyan Cats are active.\n";
@@ -87,7 +88,6 @@ void Game::startGame(int mode) {
         nyanCat = new MegaNyanCat(-1, gridCols / 2, 1, &burger);  // Mega mode
         std::cout << "Mega mode selected! Mega Nyan Cats are active.\n";
     }
-
     nyanCat->initializeCats();  // Initialize the falling cats
     char input;
     while (burger.getLives() > 0) {
@@ -107,7 +107,6 @@ void Game::startGame(int mode) {
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
-
     // Update the corresponding high score
     if (mode == 1) {
         if (burger.getScore() > easyHighScore) {

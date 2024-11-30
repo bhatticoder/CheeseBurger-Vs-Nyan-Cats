@@ -2,13 +2,16 @@
 #define GAME_H
 #include "Nyancat.h"
 #include "Cheeseburger.h"
+#include "PowerUp.h"
 class Game {
 private:
     int easyHighScore;   // High score for Easy mode
     int mediumHighScore; // High score for Medium mode
     int hardHighScore;
+    
 public:
     Game(); // Constructor
+    ~Game(); // Destructors
     void run(); // Main game loop
     void displayMainMenu();
     void displayLevelMenu();

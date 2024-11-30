@@ -4,30 +4,8 @@
 using namespace std;
 // Constructor
 Cheeseburger::Cheeseburger(int x, int y, int speed, int lives, int startCol)
-    : GameObject(x, y, 4, 2), score(0), lives(3), speed(speed), player_col(startCol) {
-    this->x = x; // Initialize inherited member variable for x-coordinate
-    this->y = y;
-}
-// Activate a powerup
-void Cheeseburger::activate_powerup(int type) {
-    switch (type) {
-    case 1: // Example: Speed boost
-        speed += 2;
-        std::cout << "Speed Boost activated! New speed: " << speed << std::endl;
-        break;
-    case 2: // Example: Extra life
-        lives++;
-        std::cout << "Extra Life! Lives now: " << lives << std::endl;
-        break;
-    case 3: // Example: Score multiplier
-        score += 100; // Adjust score as per logic
-        std::cout << "Score Boost! Score now: " << score << std::endl;
-        break;
-    default:
-        break;
-    }
-}
-// Cheeseburger class's operator<< overload (if it's updating score)
+    : GameObject(x, y, 4, 2), score(0), lives(lives), speed(speed), player_col(startCol), shieldTimer(10) {}
+
 std::ostream& operator<<(std::ostream& os, const Cheeseburger& burger) {
     os << "Score: " << burger.getScore();
     return os;
@@ -66,4 +44,36 @@ void Cheeseburger::move(char direction) {
 }
 void Cheeseburger::draw() {
     cout << "=";
+}
+void Cheeseburger::activateShield(int duration) {
+    shieldActive = true;
+    shieldTimer = duration;  // Counted down in the game loop
+}
+
+void Cheeseburger::activateScoreMultiplier(int duration) {
+    scoreMultiplier = 2;  // Double score
+    scoreMultiplierTimer = duration;
+}
+
+void Cheeseburger::activateSpeedBoost(int duration) {
+    speedBoostActive = true;
+    speedBoostTimer = duration;
+}
+
+void Cheeseburger::updatePowerupTimers() {
+    if (shieldActive && --shieldTimer <= 0) shieldActive = false;
+    if (scoreMultiplier > 1 && --scoreMultiplierTimer <= 0) scoreMultiplier = 1;
+    if (speedBoostActive && --speedBoostTimer <= 0) speedBoostActive = false;
+}
+int Cheeseburger::getShieldTime() const {
+    return shieldTimer;
+}
+void Cheeseburger::updateShield() {
+    if (shieldTimer > 0) {
+        --shieldTimer;
+        if (shieldTimer == 0) {
+            shieldActive = false;
+            std::cout << "Shield Deactivated!\n";
+        }
+    }
 }

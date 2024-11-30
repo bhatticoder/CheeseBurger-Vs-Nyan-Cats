@@ -2,9 +2,6 @@
 #include <iostream>
 #include <string>
 using namespace std;
-struct color {
-    int r, g, b;
-};
 class GameObject {
 protected:
     int x, y;            // Position of the object (not currently used but can be extended)
@@ -18,6 +15,7 @@ public:
     virtual void draw() = 0;
     virtual bool collide(GameObject* other) = 0;
     // Add getter methods
+    void setY(int y) { y = y; }
     int getX() const { return x; }
     int getY() const { return y; }
     int getWidth() const { return width; }
