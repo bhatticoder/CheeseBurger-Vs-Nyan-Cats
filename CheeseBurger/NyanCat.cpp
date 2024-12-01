@@ -5,10 +5,18 @@
 #include <conio.h>
 #include <thread>
 #include <chrono>
-// NyanCat constructor
 NyanCat::NyanCat(int startRow, int startCol, int speed, Cheeseburger* burger)
-    : GameObject(startRow, startCol, 20, 40), falling_speed(speed), playerLives(3),
-    player_col(startCol), burger(burger) {}
+    : GameObject(startRow, startCol, 20, 40), // Initialize base class with position and dimensions
+    falling_speed(speed),                  // Set falling speed
+    playerLives(3),                        // Default lives
+    player_col(startCol),                  // Set player column
+    burger(burger)                         // Associate with Cheeseburger object
+{
+    for (int i = 0; i < maxCats; ++i) {
+        cats[i].row = startRow - (i * 2); // Stagger rows for cats
+        cats[i].col = startCol;           // Align all cats with the initial column
+    }
+}
 int NyanCat::getLives() const {
     return playerLives;
 }
@@ -32,7 +40,6 @@ void NyanCat::move(char direction) {
         if (player_col < cols - 4) player_col++;
     }
 }
-// RegularNyanCat implementation
 RegularNyanCat::RegularNyanCat(int startRow, int startCol, int speed, Cheeseburger* burger)
     : NyanCat(startRow, startCol, speed, burger) {}
 void RegularNyanCat::fall() {
@@ -63,7 +70,7 @@ bool RegularNyanCat::collide(GameObject* collideobject) {
                 if (burger) {
                     burger->collide(this); // Trigger cheeseburger's collision logic
                 }
-            }\
+            }
                 cats[i].row = -1; // Start falling again from the top
         }
     }

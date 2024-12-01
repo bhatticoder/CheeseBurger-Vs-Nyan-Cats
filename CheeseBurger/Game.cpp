@@ -6,9 +6,7 @@
 #include <chrono>     // For std::chrono::milliseconds
 const int gridCols = 20; // Set this to the appropriate value
 Game::Game() : easyHighScore(0), mediumHighScore(0), hardHighScore(0){}
-Game::~Game() {
-
-}
+Game::~Game() {}
 void Game::displayMainMenu() {
     system("cls");  // Clear the screen
     std::cout << "=============================\n";

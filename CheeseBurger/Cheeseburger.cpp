@@ -4,8 +4,12 @@
 using namespace std;
 // Constructor
 Cheeseburger::Cheeseburger(int x, int y, int speed, int lives, int startCol)
-    : GameObject(x, y, 4, 2), score(0), lives(lives), speed(speed), player_col(startCol), shieldTimer(10) {}
-
+    : GameObject(x, y, 4, 2),  // Initializes GameObject's position and dimensions
+    score(0),                // Initializes score to 0
+    lives(lives),            // Sets lives to the passed parameter
+    speed(speed),            // Sets speed to the passed parameter
+    player_col(startCol)     // Initializes player column to startCol
+{}
 std::ostream& operator<<(std::ostream& os, const Cheeseburger& burger) {
     os << "Score: " << burger.getScore();
     return os;
@@ -44,36 +48,4 @@ void Cheeseburger::move(char direction) {
 }
 void Cheeseburger::draw() {
     cout << "=";
-}
-void Cheeseburger::activateShield(int duration) {
-    shieldActive = true;
-    shieldTimer = duration;  // Counted down in the game loop
-}
-
-void Cheeseburger::activateScoreMultiplier(int duration) {
-    scoreMultiplier = 2;  // Double score
-    scoreMultiplierTimer = duration;
-}
-
-void Cheeseburger::activateSpeedBoost(int duration) {
-    speedBoostActive = true;
-    speedBoostTimer = duration;
-}
-
-void Cheeseburger::updatePowerupTimers() {
-    if (shieldActive && --shieldTimer <= 0) shieldActive = false;
-    if (scoreMultiplier > 1 && --scoreMultiplierTimer <= 0) scoreMultiplier = 1;
-    if (speedBoostActive && --speedBoostTimer <= 0) speedBoostActive = false;
-}
-int Cheeseburger::getShieldTime() const {
-    return shieldTimer;
-}
-void Cheeseburger::updateShield() {
-    if (shieldTimer > 0) {
-        --shieldTimer;
-        if (shieldTimer == 0) {
-            shieldActive = false;
-            std::cout << "Shield Deactivated!\n";
-        }
-    }
 }
