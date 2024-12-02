@@ -1,53 +1,61 @@
 #ifndef NYANCAT_H
 #define NYANCAT_H
+
 #include "GameObject.h"
 #include "Cheeseburger.h"
+#include <cstdlib>
+#include <iostream>
+
 class NyanCat : public GameObject {
 protected:
-    int falling_speed;
-    int playerLives;
-    int player_col;
-    Cheeseburger* burger;
-    static const int maxCats = 3;  // Maximum number of Nyan Cats
+    static const int maxCats = 3;
     struct Cat {
-        int row;
-        int col;
-    };
-    Cat cats[maxCats];  // Array of cats
+        int row, col;
+    } cats[maxCats];
+    int falling_speed, playerLives, player_col;
+    Cheeseburger* burger;
+
 public:
+    //virtual int MaxCats() const = 0;
+    //virtual void initializeCats() = 0;
+    int MaxCats()const;
+    Cat* getCats() { return cats; }
     NyanCat(int startRow, int startCol, int speed, Cheeseburger* burger);
     virtual void fall() = 0;
+    virtual void draw() = 0;
     virtual bool collide(GameObject* collideobject) = 0;
-    // Getters
-    void move(char direction)override;
-    void initializeCats();
+    virtual void move(char direction) = 0;
     int getLives() const;
-    int getRow() const;
     int getPlayerCol() const;
+    void initializeCats();
 };
+
 class RegularNyanCat : public NyanCat {
 public:
-    RegularNyanCat(int startRow, int startCol, int speed, Cheeseburger* burger);
+    RegularNyanCat(int x, int y, int speed, Cheeseburger* burger);
     void fall() override;
-    void draw()override;
-    void move(char direction)override;
+    void draw() override;
     bool collide(GameObject* collideobject) override;
+    void move(char direction)override;
 };
+
 class SuperNyanCat : public NyanCat {
 public:
     SuperNyanCat(int startRow, int startCol, int speed, Cheeseburger* burger);
     void fall() override;
-    void draw()override;
-    void move(char direction)override;
+    void draw() override;
     bool collide(GameObject* collideobject) override;
+    void move(char direction)override;
 };
-class MegaNyanCat :public NyanCat {
+
+class MegaNyanCat : public NyanCat {
 public:
     MegaNyanCat(int startRow, int startCol, int speed, Cheeseburger* burger);
-    void fall()override;
-    void draw()override;
-    void move(char direction)override;
+    void fall() override;
+    void draw() override;
     bool collide(GameObject* collideobject) override;
+    void move(char direction)override;
     void teleport();
 };
-#endif  // NYANCAT_H
+
+#endif

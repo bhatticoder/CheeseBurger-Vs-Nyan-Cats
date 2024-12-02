@@ -8,7 +8,6 @@ private:
     int easyHighScore;   // High score for Easy mode
     int mediumHighScore; // High score for Medium mode
     int hardHighScore;
-    
 public:
     Game(); // Constructor
     ~Game(); // Destructors

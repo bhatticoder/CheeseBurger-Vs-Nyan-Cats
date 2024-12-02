@@ -12,7 +12,7 @@ NyanCat::NyanCat(int startRow, int startCol, int speed, Cheeseburger* burger)
     player_col(startCol),                  // Set player column
     burger(burger)                         // Associate with Cheeseburger object
 {
-    for (int i = 0; i < maxCats; ++i) {
+    for (int i = 0; i < MaxCats(); ++i) {
         cats[i].row = startRow - (i * 2); // Stagger rows for cats
         cats[i].col = startCol;           // Align all cats with the initial column
     }
@@ -20,31 +20,29 @@ NyanCat::NyanCat(int startRow, int startCol, int speed, Cheeseburger* burger)
 int NyanCat::getLives() const {
     return playerLives;
 }
-int NyanCat::getRow() const {
-    return -1;  // Not applicable, override in child class
-}
+int NyanCat::MaxCats()const { return maxCats; }
 int NyanCat::getPlayerCol() const {
     return player_col;
 }
 void NyanCat::initializeCats() {
-    for (int i = 0; i < maxCats; ++i) {
+    for (int i = 0; i < MaxCats(); ++i) {
         cats[i].row = -1;  // Start from the top
         cats[i].col = rand() % (cols - 2) + 1;  // Random column
     }
 }
 void NyanCat::move(char direction) {
-    if (direction == 'a' || direction == 'A') {
+    /*if (direction == 'a' || direction == 'A') {
         if (player_col > 1) player_col--;
     }
     else if (direction == 'd' || direction == 'D') {
         if (player_col < cols - 4) player_col++;
-    }
+    }*/
 }
 RegularNyanCat::RegularNyanCat(int startRow, int startCol, int speed, Cheeseburger* burger)
     : NyanCat(startRow, startCol, speed, burger) {}
 void RegularNyanCat::fall() {
     // Regular Nyan Cat behavior: just fall with the regular speed
-    for (int i = 0; i < maxCats; ++i) {
+    for (int i = 0; i < MaxCats(); ++i) {
         // Check if the cat has reached the bottom of the screen
         if (cats[i].row >= rows - 1) {
             // Reset the position of the Nyan Cat if it reaches the bottom
@@ -77,33 +75,15 @@ bool RegularNyanCat::collide(GameObject* collideobject) {
     return false; // Default return value for no collision
 }
 void RegularNyanCat::draw() {
-    for (int i = 0; i < rows; ++i) {
-        for (int j = 0; j < cols; ++j) {
-            if (i == rows - 2 && j >= player_col && j < player_col + 4) {
-                burger->draw();
-            }
-            else {
-                bool isCatHere = false;
-                for (int k = 0; k < maxCats; ++k) {
-                    if (cats[k].row == i && cats[k].col == j) {
-                        std::cout << "N";
-                        isCatHere = true;
-                        break;
-                    }
-                }
-                if (!isCatHere) std::cout << " "; // Empty space
-            }
-        }
-        std::cout << std::endl;
-    }
+    cout << "N";
 }
 void RegularNyanCat::move(char direction) {
-    if (direction == 'a' || direction == 'A') {
+    /*if (direction == 'a' || direction == 'A') {
         if (player_col > 1) player_col--;
     }
     else if (direction == 'd' || direction == 'D') {
         if (player_col < cols - 4) player_col++;
-    }
+    }*/
 }
 ////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////|Super Nyan Cat Implementation|///////////////////////////
@@ -112,7 +92,7 @@ void RegularNyanCat::move(char direction) {
 SuperNyanCat::SuperNyanCat(int startRow, int startCol, int speed, Cheeseburger* burger)
     : NyanCat(startRow, startCol, speed, burger) {}
 void SuperNyanCat::fall() {
-    for (int i = 0; i < maxCats; ++i) {
+    for (int i = 0; i < MaxCats(); ++i) {
         if (cats[i].row >= rows - 1) {
             cats[i].row = -1;
             cats[i].col = rand() % (cols - 2) + 1;  // Random column for the Super Nyan Cat
@@ -143,33 +123,15 @@ bool SuperNyanCat::collide(GameObject* collideobject) {
     return false; // Default return value for no collision
 }
 void SuperNyanCat::draw() {
-    for (int i = 0; i < rows; ++i) {
-        for (int j = 0; j < cols; ++j) {
-            if (i == rows - 2 && j >= player_col && j < player_col + 4) {
-                burger->draw();
-            }
-            else {
-                bool isCatHere = false;
-                for (int k = 0; k < maxCats; ++k) {
-                    if (cats[k].row == i && cats[k].col == j) {
-                        std::cout << "N";
-                        isCatHere = true;
-                        break;
-                    }
-                }
-                if (!isCatHere) std::cout << " "; // Empty space
-            }
-        }
-        std::cout << std::endl;
-    }
+    cout << "N";
 }
 void SuperNyanCat::move(char direction) {
-    if (direction == 'a' || direction == 'A') {
+    /*if (direction == 'a' || direction == 'A') {
         if (player_col > 1) player_col--;
     }
     else if (direction == 'd' || direction == 'D') {
         if (player_col < cols - 4) player_col++;
-    }
+    }*/
 }
 ////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////|Mega Nyan Cat Implementation|///////////////////////////
@@ -177,7 +139,7 @@ void SuperNyanCat::move(char direction) {
 MegaNyanCat::MegaNyanCat(int startRow, int startCol, int speed, Cheeseburger* burger)
     : NyanCat(startRow, startCol, speed, burger) {}
 void MegaNyanCat::fall() {
-    for (int i = 0; i < maxCats; ++i) {
+    for (int i = 0; i < MaxCats(); ++i) {
         if (cats[i].row >= rows - 1) {
             cats[i].row = -1;
             cats[i].col = rand() % (cols - 2) + 1;  // Random column for the Super Nyan Cat
@@ -211,37 +173,19 @@ bool MegaNyanCat::collide(GameObject* collideobject) {
     return false; // Default return value for no collision
 }
 void MegaNyanCat::draw() {
-    for (int i = 0; i < rows; ++i) {
-        for (int j = 0; j < cols; ++j) {
-            if (i == rows - 2 && j >= player_col && j < player_col + 4) {
-                burger->draw();
-            }
-            else {
-                bool isCatHere = false;
-                for (int k = 0; k < maxCats; ++k) {
-                    if (cats[k].row == i && cats[k].col == j) {
-                        std::cout << "N";
-                        isCatHere = true;
-                        break;
-                    }
-                }
-                if (!isCatHere) std::cout << " "; // Empty space
-            }
-        }
-        std::cout << std::endl;
-    }
+    cout << "N";
 }
 void MegaNyanCat::move(char direction) {
-    if (direction == 'a' || direction == 'A') {
+    /*if (direction == 'a' || direction == 'A') {
         if (player_col > 1) player_col--;
     }
     else if (direction == 'd' || direction == 'D') {
         if (player_col < cols - 4) player_col++;
-    }
+    }*/
 }
 void MegaNyanCat::teleport() {
     // Teleport Super Nyan to a random column
-    for (int i = 0; i < maxCats; ++i) {
+    for (int i = 0; i < MaxCats(); ++i) {
         if (cats[i].row >= 0) {  // Ensure Super Nyan is active (not offscreen)
             cats[i].col = rand() % (cols - 2) + 1;  // Random column within screen bounds
         }

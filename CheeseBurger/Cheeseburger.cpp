@@ -40,10 +40,14 @@ int Cheeseburger::getSpeed()const {
 }
 void Cheeseburger::move(char direction) {
     if (direction == 'a' || direction == 'A') {
-        if (player_col > 1) player_col--;
+        if (player_col > 0) {
+            player_col--;  // Move left
+        }
     }
     else if (direction == 'd' || direction == 'D') {
-        if (player_col < cols - 4) player_col++;
+        if (player_col < cols - 4) {
+            player_col++;  // Move right
+        }
     }
 }
 void Cheeseburger::draw() {

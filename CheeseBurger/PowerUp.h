@@ -1,24 +1,37 @@
 #ifndef POWERUP_H
 #define POWERUP_H
+
 #include "GameObject.h"
+#include "Nyancat.h"
 #include "Cheeseburger.h"
-#include "NyanCat.h"
-#include <iostream>
 #include <cstdlib>
+#include <ctime>
+
 class Powerup : public GameObject {
-protected:
-    int duration;    
-    bool isActive;   
+private:
+    const int rows, cols;
     Cheeseburger* burger;
-    int rows;       
-    int cols;       
-    int speed;    
-    struct power {
-        int row;
-        int col;
-    };
+    int speed, player_col;
+    static const int maxCats = 3;
+    struct Cat {
+        int row, col;
+    } cats[maxCats];
+    int shieldRow, shieldCol;
+    int boosterRow, boosterCol;
+    int multiplierRow, multiplierCol;
+    int getRow() const;
+    int getCol() const;
+    bool shieldActive, boosterActive, multiplierActive;
 public:
-    Powerup(int x, int y, int rows, int cols, Cheeseburger* burger, int speed = 1);
-    void draw()override;
+    Powerup(int x, int y, int rows, int cols, Cheeseburger* burger, int speed, int startCol);
+    virtual ~Powerup() {}
+    void move(char dir)override;
+    virtual void draw() override;
+    void fall();
+    bool collide(GameObject* other) override;
+    int drawShield() const;
+    int drawBooseter() const;
+    int drawScoreMultiplier() const;
 };
+
 #endif

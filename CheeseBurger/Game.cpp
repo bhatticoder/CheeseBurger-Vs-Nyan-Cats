@@ -5,7 +5,8 @@
 #include <thread>     // For std::this_thread::sleep_for
 #include <chrono>     // For std::chrono::milliseconds
 const int gridCols = 20; // Set this to the appropriate value
-Game::Game() : easyHighScore(0), mediumHighScore(0), hardHighScore(0){}
+const int gridRows = 20;
+Game::Game() : easyHighScore(0), mediumHighScore(0), hardHighScore(0) {}
 Game::~Game() {}
 void Game::displayMainMenu() {
     system("cls");  // Clear the screen
@@ -71,9 +72,10 @@ void Game::displayCredits() {
     std::cin.get();  // Wait for user input
 }
 void Game::startGame(int mode) {
-    Cheeseburger burger(-1, 0, gridCols / 2, 1, 3); // Initialize Cheeseburger (player)
-    //burger = new Cheeseburger(-1, 0, gridCols / 2, 1, 3);
+    Cheeseburger burger(-1, 0, gridCols / 2, 1, 3);  // Initialize Cheeseburger (player)
     NyanCat* nyanCat = nullptr;
+
+    // Initialize the appropriate NyanCat type based on the game mode
     if (mode == 1) {
         nyanCat = new RegularNyanCat(-1, gridCols / 2, 1, &burger);  // Easy mode
         std::cout << "Easy mode selected! Regular Nyan Cats are active.\n";
@@ -86,25 +88,62 @@ void Game::startGame(int mode) {
         nyanCat = new MegaNyanCat(-1, gridCols / 2, 1, &burger);  // Mega mode
         std::cout << "Mega mode selected! Mega Nyan Cats are active.\n";
     }
+
     nyanCat->initializeCats();  // Initialize the falling cats
+    Powerup powers(-1, 0, gridRows, gridCols, &burger, 1, -1); // Now only 6 arguments // Initialize the Powerup system
+
     char input;
     while (burger.getLives() > 0) {
         system("cls");
+
+        // Move and draw Nyan Cats (fall and collide)
+        if (nyanCat != nullptr) {
+            nyanCat->fall();  // Safe call
+            nyanCat->collide(&burger);  // Safe call
+            nyanCat->draw();  // Safe call
+        }
+
+        // Cats and powers falling logic
+        powers.fall();    // Handle the vertical falling of power-ups
+        nyanCat->fall();  // Handle the vertical falling of Nyan Cats
+        nyanCat->collide(&burger); // Handle collision
+
+        // Prevent powers from colliding with cats
+        for (int i = 0; i < gridRows; ++i) {
+            for (int j = 0; j < gridCols; ++j) {
+                bool powerOnCat = false;
+                for (int k = 0; k < nyanCat->MaxCats(); ++k) {
+                    if (powers.getX() == nyanCat->getCats()[k].row &&
+                        powers.getY() == nyanCat->getCats()[k].col) {
+                        powerOnCat = true;
+                    }
+                }
+                if (powerOnCat) {
+                    std::cout << " ";
+                }
+            }
+        }
+
+        // Draw the game board
+        powers.draw();
         nyanCat->draw();
-        nyanCat->fall();
-        nyanCat->collide(&burger);
+
         // Display player lives and score
         std::cout << "Lives remaining: " << burger.getLives() << std::endl;
         std::cout << burger << std::endl;
+
+        // Player input for movement
         if (_kbhit()) {
-            input = _getch();
+            input = _getch();  // Get user input
             if (input == 'q' || input == 'Q') {
-                break;
+                break;  // Exit game
             }
-            nyanCat->move(input);
+            burger.move(input);  // Move burger based on input
         }
+
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
+
     // Update the corresponding high score
     if (mode == 1) {
         if (burger.getScore() > easyHighScore) {
@@ -124,6 +163,7 @@ void Game::startGame(int mode) {
             std::cout << "New Hard Mode High Score: " << hardHighScore << "!\n";
         }
     }
+
     std::cout << "Game Over!" << std::endl;
     delete nyanCat;  // Free memory
     std::this_thread::sleep_for(std::chrono::seconds(2));
