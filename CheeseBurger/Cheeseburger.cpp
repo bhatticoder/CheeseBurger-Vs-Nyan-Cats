@@ -3,20 +3,16 @@
 #include <algorithm>
 #include <chrono>
 #include <thread>
-
 using namespace std;
-
 // Constructor
 Cheeseburger::Cheeseburger(int x, int y, int speed, int lives, int startCol)
     : GameObject(x, y, 4, 2), score(0), lives(lives), speed(speed), player_col(startCol),
     shieldActive(false), shieldTimer(0) {}
-
 // Update score
 void Cheeseburger::updateScore(int points) {
     score += points;
     std::cout << "Score updated! Current score: " << score << "\n";
 }
-
 // Handle collisions
 bool Cheeseburger::collide(GameObject* collideobject) {
     if (collideobject) {
@@ -29,27 +25,22 @@ bool Cheeseburger::collide(GameObject* collideobject) {
     }
     return false;
 }
-
 // Get lives
 int Cheeseburger::getLives() const {
     return lives;
 }
-
 // Get score
 int Cheeseburger::getScore() const {
     return score;
 }
-
 // Get speed
 int Cheeseburger::getSpeed() const {
     return speed;
 }
-
 // Draw cheeseburger
 void Cheeseburger::draw() {
-    cout << "=";
+    printColored("=", YELLOW);
 }
-
 // Move cheeseburger based on input direction
 void Cheeseburger::move(char direction) {
     if (direction == 'a' || direction == 'A') {
@@ -60,7 +51,6 @@ void Cheeseburger::move(char direction) {
     }
     std::cout << "Cheeseburger moved to column: " << player_col << "\n";
 }
-
 // Manage shield timer and state
 int Cheeseburger::getTimer() {
     if (shieldActive) {
@@ -74,14 +64,12 @@ int Cheeseburger::getTimer() {
     }
     return shieldTimer; // Return the remaining shield time
 }
-
 // Activate shield and set timer
 void Cheeseburger::activateShield() {
     shieldActive = true;
     shieldTimer = 10; // Set shield duration to 10 seconds
     std::cout << "Shield activated! Lives are protected for 10 seconds.\n";
 }
-
 // Update shield status in real time
 int Cheeseburger::updateShield() {
     if (shieldActive) {
@@ -94,24 +82,20 @@ int Cheeseburger::updateShield() {
     }
     return 0;
 }
-
 // Check if shield is active
 bool Cheeseburger::isShieldActive() const {
     return shieldActive;
 }
-
 // Increase speed (for SpeedBooster or other power-ups)
 void Cheeseburger::increaseSpeed() {
     speed = 4; // Temporary speed boost
     std::cout << "Speed Boost Activated! Speed increased to 4.\n";
 }
-
 // Reset speed to default
 void Cheeseburger::resetSpeed() {
     speed = defaultSpeed; // Reset speed to the normal value
     std::cout << "Speed Reset. Current speed: " << speed << std::endl;
 }
-
 // Overload output operator to display Cheeseburger state
 std::ostream& operator<<(std::ostream& os, const Cheeseburger& burger) {
     os << "Cheeseburger [Lives: " << burger.lives

@@ -62,7 +62,7 @@ bool ScoreMultiplier::collidesWith(int playerRow, int playerCol) {
         this->col < playerCol + 4;
 }
 void ScoreMultiplier::draw() {
-    std::cout << "M";  // Represent the multiplier (M for multiplier)
+    printColored("M", RED);  // Represent the multiplier (M for multiplier)
 }
 int ScoreMultiplier::getRow() const {
     return row;
@@ -128,12 +128,9 @@ void SpeedBooster::move(char direction) {
         burger->setPlayerCol(std::min(cols - 1, burger->getPlayerCol() + moveDistance));
     }
 }
-
-
 void SpeedBooster::draw() {
-    std::cout << "B";  // Represent the speed booster (B for booster)
+    printColored("B", CYAN);  // Represent the speed booster (B for booster)
 }
-
 int SpeedBooster::getRow() const {
     return row;
 }

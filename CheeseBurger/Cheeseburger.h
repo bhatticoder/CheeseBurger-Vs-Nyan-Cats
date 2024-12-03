@@ -3,7 +3,6 @@
 #include <iostream>
 #include <chrono>
 #include <thread>
-
 class Cheeseburger : public GameObject {
 private:
     int score;
@@ -13,7 +12,6 @@ private:
     bool shieldActive;
     int shieldTimer;
     const int defaultSpeed = 1;
-
 public:
     Cheeseburger(int x, int y, int speed, int lives, int startCol);
     void setPlayerCol(int col) {
@@ -26,7 +24,6 @@ public:
     int getLives() const;
     int getScore() const;
     int getSpeed() const;
-
     // Setters and Update methods
     void updateScore(int points);
     bool collide(GameObject* collideobject);
@@ -37,10 +34,8 @@ public:
     bool isShieldActive() const;
     int getTimer();
     int updateShield();
-
     // Overload output operator for Cheeseburger state
     friend std::ostream& operator<<(std::ostream& os, const Cheeseburger& burger);
-
     // Speed control methods
     void increaseSpeed(); // Boost speed temporarily
     void resetSpeed();    // Reset speed to normal

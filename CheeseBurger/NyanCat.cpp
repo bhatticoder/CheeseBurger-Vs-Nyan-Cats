@@ -16,22 +16,18 @@ NyanCat::NyanCat(int startRow, int startCol, int speed, Cheeseburger* burger, sh
 int NyanCat::getLives() const {
     return playerLives;
 }
-
 int NyanCat::getRow() const {
     return player_row;
 }
-
 int NyanCat::getPlayerCol() const {
     return player_col;
 }
-
 void NyanCat::initializeCats() {
     for (int i = 0; i < maxCats; ++i) {
         cats[i].row = -1;  // Start at the top of the screen
         cats[i].col = rand() % (cols - 2) + 1;  // Random column for each falling cat
     }
 }
-
 void NyanCat::move(char direction) {
     if (direction == 'a' || direction == 'A') {
         if (player_col > 1) player_col--;
@@ -40,7 +36,6 @@ void NyanCat::move(char direction) {
         if (player_col < cols - 4) player_col++;
     }
 }
-
 bool NyanCat::collide(GameObject* collideobject) {
     for (int i = 0; i < maxCats; ++i) {
         if (cats[i].row == rows - 2 && cats[i].col >= player_col && cats[i].col < player_col + 4) {
@@ -54,7 +49,6 @@ bool NyanCat::collide(GameObject* collideobject) {
     }
     return false; // No collision
 }
-
 ////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////|Regular Nyan Cat Implementation|////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -112,8 +106,8 @@ void RegularNyanCat::draw() {
     // Draw the game objects (cats, power-ups, cheeseburger, speed booster)
     for (int i = 0; i < rows; ++i) {
         for (int j = 0; j < cols; ++j) {
-            if (i == 0 || i == rows - 1) std::cout << "=";  // Top and bottom border
-            else if (j == 0 || j == cols - 1) std::cout << "||";  // Side border
+            if (i == 0 || i == rows - 1) printColored("=", BLUE);  // Top and bottom border
+            else if (j == 0 || j == cols - 1) printColored("||", BLUE);  // Side border
             else if (i == rows - 2 && j >= player_col && j < player_col + 4) burger->draw();  // Draw cheeseburger at player's position
             else if (i == powerUp->getRow() && j == powerUp->getCol()) powerUp->draw();  // Draw power-up
             else if (i == multiplier->getRow() && j == multiplier->getCol()) multiplier->draw();  // Draw multiplier
@@ -122,7 +116,7 @@ void RegularNyanCat::draw() {
                 bool isCatHere = false;
                 for (int k = 0; k < maxCats; ++k) {
                     if (cats[k].row == i && cats[k].col == j) {
-                        std::cout << "N";  // Draw Nyan Cat
+                        printColored("N", MAGENTA);  // Draw Nyan Cat
                         isCatHere = true;
                         break;
                     }
@@ -138,7 +132,7 @@ void RegularNyanCat::draw() {
 ////////////////////////////////////////////////////////////////////////////////////////
 SuperNyanCat::SuperNyanCat(int startRow, int startCol, int speed, Cheeseburger* burger, shield* powerUp, ScoreMultiplier* multiplier, SpeedBooster* booster)
     : NyanCat(startRow, startCol, speed, burger, powerUp, multiplier, booster) {
-    // Constructor definition
+    // Implementation here
 }
 void SuperNyanCat::fall() {
     // Update cats falling
@@ -198,8 +192,8 @@ void SuperNyanCat::draw() {
     // Draw the game objects (cats, power-ups, cheeseburger, speed booster)
     for (int i = 0; i < rows; ++i) {
         for (int j = 0; j < cols; ++j) {
-            if (i == 0 || i == rows - 1) std::cout << "=";  // Top and bottom border
-            else if (j == 0 || j == cols - 1) std::cout << "||";  // Side border
+            if (i == 0 || i == rows - 1) printColored("=", BLUE);  // Top and bottom border
+            else if (j == 0 || j == cols - 1) printColored("||", BLUE);  // Side border
             else if (i == rows - 2 && j >= player_col && j < player_col + 4) burger->draw();  // Draw cheeseburger at player's position
             else if (i == powerUp->getRow() && j == powerUp->getCol()) powerUp->draw();  // Draw power-up
             else if (i == multiplier->getRow() && j == multiplier->getCol()) multiplier->draw();  // Draw multiplier
@@ -208,7 +202,7 @@ void SuperNyanCat::draw() {
                 bool isCatHere = false;
                 for (int k = 0; k < maxCats; ++k) {
                     if (cats[k].row == i && cats[k].col == j) {
-                        std::cout << "N";  // Draw Nyan Cat
+                        printColored("N", MAGENTA);  // Draw Nyan Cat
                         isCatHere = true;
                         break;
                     }
@@ -301,8 +295,8 @@ void MegaNyanCat::draw() {
     // Draw the game objects (cats, power-ups, cheeseburger, speed booster)
     for (int i = 0; i < rows; ++i) {
         for (int j = 0; j < cols; ++j) {
-            if (i == 0 || i == rows - 1) std::cout << "=";  // Top and bottom border
-            else if (j == 0 || j == cols - 1) std::cout << "||";  // Side border
+            if (i == 0 || i == rows - 1) printColored("=", BLUE);  // Top and bottom border
+            else if (j == 0 || j == cols - 1) printColored("||", BLUE);  // Side border
             else if (i == rows - 2 && j >= player_col && j < player_col + 4) burger->draw();  // Draw cheeseburger at player's position
             else if (i == powerUp->getRow() && j == powerUp->getCol()) powerUp->draw();  // Draw power-up
             else if (i == multiplier->getRow() && j == multiplier->getCol()) multiplier->draw();  // Draw multiplier
@@ -311,7 +305,7 @@ void MegaNyanCat::draw() {
                 bool isCatHere = false;
                 for (int k = 0; k < maxCats; ++k) {
                     if (cats[k].row == i && cats[k].col == j) {
-                        std::cout << "N";  // Draw Nyan Cat
+                        printColored("N", MAGENTA);  // Draw Nyan Cat
                         isCatHere = true;
                         break;
                     }

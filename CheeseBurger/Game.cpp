@@ -213,7 +213,6 @@ void Game::startGame(int mode) {
         delete nyanCat;
         return;
     }
-
     updateHighScores(mode, burger.getScore());
     std::cout << "Game Over!\n";
     delete nyanCat;
@@ -230,15 +229,7 @@ void Game::pauseMenu() {
     std::cout << "Select your option: ";
     int pauseChoice;
     std::cin >> pauseChoice;
-    switch (pauseChoice) {
-    case 1:
-        return;  // Resume the game
-    case 2:
-        displayMainMenu();
-        break;
-    default:
-        break;
-    }
+    if (pauseChoice == 2) throw std::runtime_error("exit");
 }
 void Game::updateHighScores(int mode, int score) {
     std::array<int, 5>* highScores = nullptr;

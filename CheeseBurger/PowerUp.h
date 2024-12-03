@@ -17,7 +17,7 @@ public:
     shield(int totalRows, int totalCols);
     bool collide(GameObject* other)override { return false; }
     void move(char dir)override { cout << "Nothing"; }
-    void draw()override { cout << "S"; }
+    void draw()override { printColored("S", GREEN); }
     void initialize();                // Initialize the position of the power-up
     void fall();                      // Move the power-up downward
     bool collidesWith(int catRow, int catCol); // Check if it collides with any object

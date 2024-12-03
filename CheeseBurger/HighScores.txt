@@ -1,3 +1,3 @@
-Easy Mode: 130 30 0 0 0 
+Easy Mode: 0 0 0 0 0 
 Medium Mode: 0 0 0 0 0 
 Hard Mode: 0 0 0 0 0 
