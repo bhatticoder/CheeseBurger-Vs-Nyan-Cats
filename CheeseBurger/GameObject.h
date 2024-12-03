@@ -18,6 +18,8 @@ public:
     void setY(int y) { y = y; }
     int getX() const { return x; }
     int getY() const { return y; }
+    int getRow()const { return rows; }
+    int getCol()const { return cols; }
     int getWidth() const { return width; }
     int getHeight() const { return heigth; }
 };

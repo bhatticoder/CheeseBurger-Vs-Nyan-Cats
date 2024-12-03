@@ -3,59 +3,56 @@
 
 #include "GameObject.h"
 #include "Cheeseburger.h"
-#include <cstdlib>
-#include <iostream>
+#include "PowerUp.h"
 
 class NyanCat : public GameObject {
 protected:
-    static const int maxCats = 3;
-    struct Cat {
-        int row, col;
-    } cats[maxCats];
-    int falling_speed, playerLives, player_col;
+    int falling_speed;
+    int playerLives;
+    int player_col;
     Cheeseburger* burger;
+    static const int maxCats = 3;  // Maximum number of Nyan Cats
+    struct Cat {
+        int row;
+        int col;
+    };
+    Cat cats[maxCats];            // Array of cats
+    PowerUp* powerUp;             // PowerUp object
 
 public:
-    //virtual int MaxCats() const = 0;
-    //virtual void initializeCats() = 0;
-    int MaxCats()const;
-    Cat* getCats() { return cats; }
-    NyanCat(int startRow, int startCol, int speed, Cheeseburger* burger);
+    NyanCat(int startRow, int startCol, int speed, Cheeseburger* burger, PowerUp* powerUp);
     virtual void fall() = 0;
-    virtual void draw() = 0;
     virtual bool collide(GameObject* collideobject) = 0;
-    virtual void move(char direction) = 0;
-    int getLives() const;
-    int getPlayerCol() const;
+    void move(char direction) override;
     void initializeCats();
+    int getLives() const;
+    int getRow() const;
+    int getPlayerCol() const;
 };
 
 class RegularNyanCat : public NyanCat {
 public:
-    RegularNyanCat(int x, int y, int speed, Cheeseburger* burger);
+    RegularNyanCat(int startRow, int startCol, int speed, Cheeseburger* burger, PowerUp* powerUp);
     void fall() override;
     void draw() override;
     bool collide(GameObject* collideobject) override;
-    void move(char direction)override;
 };
 
 class SuperNyanCat : public NyanCat {
 public:
-    SuperNyanCat(int startRow, int startCol, int speed, Cheeseburger* burger);
+    SuperNyanCat(int startRow, int startCol, int speed, Cheeseburger* burger, PowerUp* powerUp);
     void fall() override;
     void draw() override;
     bool collide(GameObject* collideobject) override;
-    void move(char direction)override;
 };
 
 class MegaNyanCat : public NyanCat {
 public:
-    MegaNyanCat(int startRow, int startCol, int speed, Cheeseburger* burger);
+    MegaNyanCat(int x, int y, int speed, Cheeseburger* cheeseburger, PowerUp* powerup);
     void fall() override;
     void draw() override;
     bool collide(GameObject* collideobject) override;
-    void move(char direction)override;
-    void teleport();
+    void teleport();  // Unique feature for MegaNyanCat
 };
 
-#endif
+#endif  // NYANCAT_H

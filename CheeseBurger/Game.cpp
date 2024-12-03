@@ -72,102 +72,109 @@ void Game::displayCredits() {
     std::cin.get();  // Wait for user input
 }
 void Game::startGame(int mode) {
-    Cheeseburger burger(-1, 0, gridCols / 2, 1, 3);  // Initialize Cheeseburger (player)
+    // Initialize the Cheeseburger (player) and PowerUp
+    Cheeseburger burger(-1, 0, gridCols / 2, 1, 3); // Position the player in the middle
+    PowerUp powerUp(gridRows, gridCols);             // Create the PowerUp instance
+    powerUp.initialize();                            // Initialize PowerUp object
+
+    // Create a pointer for the NyanCat
     NyanCat* nyanCat = nullptr;
 
-    // Initialize the appropriate NyanCat type based on the game mode
-    if (mode == 1) {
-        nyanCat = new RegularNyanCat(-1, gridCols / 2, 1, &burger);  // Easy mode
+    // Initialize the NyanCat based on the selected mode
+    switch (mode) {
+    case 1:
+        nyanCat = new RegularNyanCat(-1, gridCols / 2, 1, &burger, &powerUp);
         std::cout << "Easy mode selected! Regular Nyan Cats are active.\n";
-    }
-    else if (mode == 2) {
-        nyanCat = new SuperNyanCat(-1, gridCols / 2, 1, &burger);  // Medium mode
+        break;
+    case 2:
+        nyanCat = new SuperNyanCat(-1, gridCols / 2, 1, &burger, &powerUp);
         std::cout << "Medium mode selected! Super Nyan Cats are active.\n";
-    }
-    else if (mode == 3) {
-        nyanCat = new MegaNyanCat(-1, gridCols / 2, 1, &burger);  // Mega mode
-        std::cout << "Mega mode selected! Mega Nyan Cats are active.\n";
+        break;
+    case 3:
+        nyanCat = new MegaNyanCat(-1, gridCols / 2, 1, &burger, &powerUp);
+        std::cout << "Hard mode selected! Mega Nyan Cats are active.\n";
+        break;
+    default:
+        std::cout << "Invalid mode selected, exiting...\n";
+        return;
     }
 
-    nyanCat->initializeCats();  // Initialize the falling cats
-    Powerup powers(-1, 0, gridRows, gridCols, &burger, 1, -1); // Now only 6 arguments // Initialize the Powerup system
+    nyanCat->initializeCats();  // Initialize the falling Nyan Cats
 
     char input;
     while (burger.getLives() > 0) {
-        system("cls");
+        system("cls");  // Clear the console screen for the next frame
 
-        // Move and draw Nyan Cats (fall and collide)
-        if (nyanCat != nullptr) {
-            nyanCat->fall();  // Safe call
-            nyanCat->collide(&burger);  // Safe call
-            nyanCat->draw();  // Safe call
-        }
+        nyanCat->draw();   // Draw the NyanCats and other elements (like power-ups)
+        nyanCat->fall();   // Update the position of NyanCats
 
-        // Cats and powers falling logic
-        powers.fall();    // Handle the vertical falling of power-ups
-        nyanCat->fall();  // Handle the vertical falling of Nyan Cats
-        nyanCat->collide(&burger); // Handle collision
-
-        // Prevent powers from colliding with cats
-        for (int i = 0; i < gridRows; ++i) {
-            for (int j = 0; j < gridCols; ++j) {
-                bool powerOnCat = false;
-                for (int k = 0; k < nyanCat->MaxCats(); ++k) {
-                    if (powers.getX() == nyanCat->getCats()[k].row &&
-                        powers.getY() == nyanCat->getCats()[k].col) {
-                        powerOnCat = true;
-                    }
-                }
-                if (powerOnCat) {
-                    std::cout << " ";
-                }
-            }
-        }
-
-        // Draw the game board
-        powers.draw();
-        nyanCat->draw();
+        // Check for collision with Cheeseburger, apply shield protection if needed
+        nyanCat->collide(&burger);
 
         // Display player lives and score
         std::cout << "Lives remaining: " << burger.getLives() << std::endl;
-        std::cout << burger << std::endl;
+        std::cout << "Score: " << burger.getScore() << std::endl;
 
-        // Player input for movement
-        if (_kbhit()) {
-            input = _getch();  // Get user input
-            if (input == 'q' || input == 'Q') {
-                break;  // Exit game
-            }
-            burger.move(input);  // Move burger based on input
+        // Display shield status
+        if (burger.isShieldActive()) {
+            std::cout << "Shield Active!\n";
         }
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        // Handle user input for movement
+        if (_kbhit()) {
+            input = _getch();
+            if (input == 'q' || input == 'Q') {
+                break;  // Quit the game if 'Q' is pressed
+            }
+            nyanCat->move(input);  // Move the Cheeseburger (player)
+        }
+
+        // Implement power-up collision (if shield power-up is collected)
+        if (burger.isShieldActive()) {
+            powerUp.activateShield();
+        }
     }
 
     // Update the corresponding high score
-    if (mode == 1) {
-        if (burger.getScore() > easyHighScore) {
-            easyHighScore = burger.getScore();
-            std::cout << "New Easy Mode High Score: " << easyHighScore << "!\n";
-        }
-    }
-    else if (mode == 2) {
-        if (burger.getScore() > mediumHighScore) {
-            mediumHighScore = burger.getScore();
-            std::cout << "New Medium Mode High Score: " << mediumHighScore << "!\n";
-        }
-    }
-    else if (mode == 3) {
-        if (burger.getScore() > hardHighScore) {
-            hardHighScore = burger.getScore();
-            std::cout << "New Hard Mode High Score: " << hardHighScore << "!\n";
-        }
-    }
+    updateHighScore(mode, burger.getScore());
 
     std::cout << "Game Over!" << std::endl;
-    delete nyanCat;  // Free memory
+
+    // Free dynamically allocated memory
+    delete nyanCat;  // Free memory for the NyanCat
+
+    // Give the player a moment to read the game over message
     std::this_thread::sleep_for(std::chrono::seconds(2));
 }
+
+// Function to update high scores based on the mode
+void Game::updateHighScore(int mode, int score) {
+    switch (mode) {
+    case 1:
+        if (score > easyHighScore) {
+            easyHighScore = score;
+            std::cout << "New Easy Mode High Score: " << easyHighScore << "!\n";
+        }
+        break;
+    case 2:
+        if (score > mediumHighScore) {
+            mediumHighScore = score;
+            std::cout << "New Medium Mode High Score: " << mediumHighScore << "!\n";
+        }
+        break;
+    case 3:
+        if (score > hardHighScore) {
+            hardHighScore = score;
+            std::cout << "New Hard Mode High Score: " << hardHighScore << "!\n";
+        }
+        break;
+    default:
+        std::cout << "Invalid mode for updating high score!\n";
+        break;
+    }
+}
+
+
 void Game::run() {
     int mainChoice = 0;
     while (true) {

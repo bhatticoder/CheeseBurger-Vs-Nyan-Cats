@@ -1,110 +1,46 @@
-#include "Powerup.h"
-#include <iostream>
-#include <ctime>
-#include <cstdlib>
-
-Powerup::Powerup(int x, int y, int rows, int cols, Cheeseburger* burger, int speed, int startCol)
-    : GameObject(x, y, 4, 2), rows(rows), cols(cols), burger(burger), speed(speed), player_col(startCol),
-    shieldRow(0), shieldCol(rand() % cols), boosterRow(0), boosterCol(rand() % cols), multiplierRow(0),
-    multiplierCol(rand() % cols), shieldActive(true), boosterActive(true), multiplierActive(true) {
-    std::srand(static_cast<unsigned>(std::time(0)));
-    for (int k = 0; k < maxCats; ++k) {
-        do {
-            cats[k].row = std::rand() % rows;
-            cats[k].col = std::rand() % cols;
-        } while ((cats[k].row == shieldRow && cats[k].col == shieldCol) ||
-            (cats[k].row == boosterRow && cats[k].col == boosterCol) ||
-            (cats[k].row == multiplierRow && cats[k].col == multiplierCol));
+#include "PowerUp.h"
+PowerUp::PowerUp(int totalRows, int totalCols)
+    : GameObject(-1, 0, totalRows, totalCols), // Pass initial positions and dimensions to GameObject
+    rows(totalRows), cols(totalCols), row(-1), col(0) {}
+void PowerUp::initialize() {
+    row = -1;                        // Start above the screen
+    col = rand() % (cols - 2) + 1;   // Randomize the column
+}
+void PowerUp::fall() {
+    if (row >= rows - 1) {
+        row = -1;  // Reset to the top once it reaches the bottom
+        col = rand() % (cols - 2) + 1;  // Random horizontal position
     }
-}
-bool Powerup::collide(GameObject* other) {
-    return false;
-}
-
-int Powerup::drawShield() const {
-    return 'S';
-}
-
-int Powerup::drawBooseter() const {
-    return 'B';
-}
-
-int Powerup::drawScoreMultiplier() const {
-    return 'M';
-}
-
-void Powerup::draw() {
-    for (int i = 0; i < rows; ++i) {
-        for (int j = 0; j < cols; ++j) {
-            if (i == rows - 2 && j >= player_col && j < player_col + 4) {
-                burger->draw();
-            }
-            else if (shieldActive && i == shieldRow && j == shieldCol) {
-                std::cout << 'S';
-            }
-            else if (boosterActive && i == boosterRow && j == boosterCol) {
-                std::cout << 'B';
-            }
-            else if (multiplierActive && i == multiplierRow && j == multiplierCol) {
-                std::cout << 'M';
-            }
-            else {
-                bool isCatHere = false;
-                for (int k = 0; k < maxCats; ++k) {
-                    if (cats[k].row == i && cats[k].col == j) {
-                        isCatHere = true;
-                        std::cout << "N";  // Placeholder for NyanCat
-                        break;
-                    }
-                }
-                if (!isCatHere) {
-                    std::cout << " ";  // Empty space
-                }
-            }
-        }
-        std::cout << std::endl;
-    }
-}
-void Powerup::move(char dir) {
-    // Empty, for now, just to resolve linker error
-}
-void Powerup::fall() {
-    // Update power-ups first
-    if (shieldActive) {
-        shieldRow++;
-        if (shieldRow >= rows) {
-            shieldRow = 0;
-            shieldCol = rand() % cols;
-        }
-    }
-    if (boosterActive) {
-        boosterRow++;
-        if (boosterRow >= rows) {
-            boosterRow = 0;
-            boosterCol = rand() % cols;
-        }
-    }
-    if (multiplierActive) {
-        multiplierRow++;
-        if (multiplierRow >= rows) {
-            multiplierRow = 0;
-            multiplierCol = rand() % cols;
-        }
-    }
-
-    // Now update cats' positions
-    for (int k = 0; k < maxCats; ++k) {
-        cats[k].row++;  // Move each cat down by one row
-        if (cats[k].row >= rows) {  // If the cat reaches the bottom
-            cats[k].row = 0;  // Reset the cat to the top
-            cats[k].col = rand() % cols;  // Randomize the column
-        }
+    else {
+        row++;  // Move down by one row
     }
 }
 
-int Powerup::getRow()const {
-    return rows;
+
+int PowerUp::getRow() const {
+    return row;
 }
-int Powerup::getCol()const {
-    return cols;
+int PowerUp::getCol() const {
+    return col;
+}
+bool PowerUp::collidesWith(int row, int col) {
+    return this->row == row && this->col == col; // Simple collision check
+}
+void PowerUp::activateShield() {
+    if (!shieldActive) {
+        shieldActive = true;
+        std::cout << "Shield Activated!\n";
+        // Start the shield timer (set duration for the shield, for example 10 seconds)
+        std::thread(&PowerUp::shieldTimer, this).detach();  // Run in separate thread
+    }
+}
+
+void PowerUp::shieldTimer() {
+    int timer = 10;  // Shield duration in seconds
+    while (timer > 0) {
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+        std::cout << "Shield time remaining: " << timer-- << " seconds\n";
+    }
+    shieldActive = false;  // Deactivate shield after time runs out
+    std::cout << "Shield deactivated!\n";
 }

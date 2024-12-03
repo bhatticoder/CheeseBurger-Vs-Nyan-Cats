@@ -2,36 +2,29 @@
 #define POWERUP_H
 
 #include "GameObject.h"
-#include "Nyancat.h"
 #include "Cheeseburger.h"
 #include <cstdlib>
-#include <ctime>
-
-class Powerup : public GameObject {
+#include <thread>
+#include <chrono>
+class PowerUp : public GameObject {
 private:
-    const int rows, cols;
-    Cheeseburger* burger;
-    int speed, player_col;
-    static const int maxCats = 3;
-    struct Cat {
-        int row, col;
-    } cats[maxCats];
-    int shieldRow, shieldCol;
-    int boosterRow, boosterCol;
-    int multiplierRow, multiplierCol;
-    int getRow() const;
-    int getCol() const;
-    bool shieldActive, boosterActive, multiplierActive;
+    int row;  // Current row position
+    int col;  // Current column position
+    int rows; // Total rows (game boundary)
+    int cols; // Total columns (game boundary)
+    bool shieldActive = false;
 public:
-    Powerup(int x, int y, int rows, int cols, Cheeseburger* burger, int speed, int startCol);
-    virtual ~Powerup() {}
-    void move(char dir)override;
-    virtual void draw() override;
-    void fall();
-    bool collide(GameObject* other) override;
-    int drawShield() const;
-    int drawBooseter() const;
-    int drawScoreMultiplier() const;
+    PowerUp(int totalRows, int totalCols);
+    bool collide(GameObject* other)override { return false; }
+    void move(char dir)override { cout << "Nothing"; }
+    void draw()override { cout << "S"; }
+    void initialize();                // Initialize the position of the power-up
+    void fall();                      // Move the power-up downward
+    bool collidesWith(int catRow, int catCol); // Check if it collides with any object
+    int getRow() const;               // Get the current row
+    int getCol() const;               // Get the current column
+    void activateShield();
+    void shieldTimer();
 };
 
 #endif

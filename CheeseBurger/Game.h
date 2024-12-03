@@ -18,6 +18,7 @@ public:
     void displayHighScores();
     void displayCredits();
     void startGame(int mode);
+    void updateHighScore(int mode, int score);
 };
 
 #endif
