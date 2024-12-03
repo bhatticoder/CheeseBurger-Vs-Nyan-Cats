@@ -24,8 +24,22 @@ public:
     int getRow() const;               // Get the current row
     int getCol() const;               // Get the current column
     void activateShield(Cheeseburger* burger);
-    void drawMultiplier();
     //void shieldTimer();
+};
+class ScoreMultiplier : public GameObject {
+private:
+    int row, col;
+    bool active;
+public:
+    ScoreMultiplier(int totalRows, int totalCols);
+    void initialize();   // Initialize multiplier
+    void fall();         // Make the multiplier fall down
+    bool collidesWith(int playerRow, int playerCol);  // Check for collision
+    void draw() override; // Draw the multiplier
+    int getRow() const;
+    int getCol() const;
+    bool collide(GameObject* other) override { return false; }
+    void move(char dir) override { cout << ""; }
 };
 
 #endif

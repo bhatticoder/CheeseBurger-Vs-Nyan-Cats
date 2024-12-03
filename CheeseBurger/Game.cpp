@@ -70,50 +70,83 @@ void Game::displayCredits() {
     std::cin.get();
 }
 void Game::startGame(int mode) {
+    // Initialize objects for the game
     Cheeseburger burger(-1, 0, gridCols / 2, 1, 3);
     PowerUp powerUp(gridRows, gridCols);
     powerUp.initialize();
+    ScoreMultiplier multiplier(gridRows, gridCols);
+    multiplier.initialize();
+
+    // Declare a pointer to the NyanCat object
     NyanCat* nyanCat = nullptr;
     switch (mode) {
-    case 1: nyanCat = new RegularNyanCat(-1, gridCols / 2, 1, &burger, &powerUp); break;
-    case 2: nyanCat = new SuperNyanCat(-1, gridCols / 2, 1, &burger, &powerUp); break;
-    case 3: nyanCat = new MegaNyanCat(-1, gridCols / 2, 1, &burger, &powerUp); break;
+    case 1:
+        nyanCat = new RegularNyanCat(-1, gridCols / 2, 1, &burger, &powerUp, &multiplier);
+        break;
+    case 2:
+        nyanCat = new SuperNyanCat(-1, gridCols / 2, 1, &burger, &powerUp, &multiplier);
+        break;
+    case 3:
+        nyanCat = new MegaNyanCat(-1, gridCols / 2, 1, &burger, &powerUp, &multiplier);
+        break;
     default:
         std::cout << "Invalid mode selected, exiting...\n";
         return;
     }
+
     nyanCat->initializeCats();
+
     try {
         while (burger.getLives() > 0) {
+            // Clear the screen
             system("cls");
+
+            // Draw the game elements
             nyanCat->draw();
+
+            // Make the NyanCats fall and check for collisions
             nyanCat->fall();
             nyanCat->collide(&burger);
 
+            // Display game status (lives, score, shield)
             std::cout << "Lives: " << burger.getLives() << " | Score: " << burger.getScore();
             if (burger.isShieldActive()) {
                 std::cout << " | Shield Active (" << burger.updateShield() << " sec)";
             }
             std::cout << "\n";
 
+            // Check for user input (keyboard events)
             if (_kbhit()) {
                 char input = _getch();
-                if (input == 'q' || input == 'Q') break;
-                if (input == 27) pauseMenu();
-                else nyanCat->move(input);
+                if (input == 'q' || input == 'Q') {
+                    break; // Quit the game if 'q' or 'Q' is pressed
+                }
+                if (input == 27) { // ESC key to pause
+                    pauseMenu();
+                }
+                else {
+                    nyanCat->move(input); // Move NyanCat based on the input
+                }
             }
 
+            // Delay to control game speed
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
         }
     }
     catch (const std::runtime_error& e) {
-        delete nyanCat;
+        // Handle unexpected errors
+        std::cout << "An error occurred: " << e.what() << "\n";
+        delete nyanCat;  // Manually clean up memory
         return;
     }
+
+    // Update the high score after the game ends
     updateHighScore(mode, burger.getScore());
     std::cout << "Game Over!\n";
-    delete nyanCat;
     std::this_thread::sleep_for(std::chrono::seconds(2));
+
+    // Clean up memory when the game is over
+    delete nyanCat;
 }
 void Game::pauseMenu() {
     system("cls");
