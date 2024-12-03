@@ -57,29 +57,34 @@ void Cheeseburger::move(char direction) {
     }
     std::cout << "Cheeseburger moved to column: " << player_col << "\n";
 }
-
+int Cheeseburger::getTimer() {
+    if (shieldActive) {
+        if (shieldTimer > 0) {
+            shieldTimer--; // Decrease shield time
+        }
+        if (shieldTimer == 0) {
+            shieldActive = false; // Deactivate the shield after time runs out
+        }
+    }
+    return shieldTimer; // Return the remaining shield time
+}
 // Activate shield
 void Cheeseburger::activateShield() {
     shieldActive = true;
-    shieldTimer = 10;  // Set shield duration to 10 seconds
-    std::cout << "Shield activated! You are invincible for 10 seconds.\n";
+    shieldTimer = 10; // Reset shield duration
 }
-
-// Update shield timer
-void Cheeseburger::updateShield() {
+int Cheeseburger::updateShield() {
     if (shieldActive) {
-        if (shieldTimer > 0) {
-            shieldTimer--;
-            std::cout << "Shield time remaining: " << shieldTimer << " seconds.\n";
-        }
-        else {
-            shieldActive = false;
-            std::cout << "Shield deactivated!\n";
+        std::this_thread::sleep_for(std::chrono::seconds(1));  // Wait for 1 second
+        shieldTimer--;  // Decrease shield time
+        if (shieldTimer <= 0) {
+            shieldActive = false;  // Shield expires after time runs out
+            std::cout << "Shield deactivated.\n";
         }
     }
+    return 0;
 }
 
-// Check if shield is active
 bool Cheeseburger::isShieldActive() const {
     return shieldActive;
 }

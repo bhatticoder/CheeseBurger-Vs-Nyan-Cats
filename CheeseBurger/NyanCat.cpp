@@ -7,13 +7,23 @@
 #include <chrono>
 NyanCat::NyanCat(int startRow, int startCol, int speed, Cheeseburger* burger, PowerUp* powerUp)
     : GameObject(startRow, startCol, 25, 50),
-    falling_speed(speed),
-    playerLives(3),
-    player_col(startCol),
-    burger(burger),
-    powerUp(powerUp) {
+      falling_speed(speed),
+      playerLives(3),
+      player_row(startRow),
+      player_col(startCol),
+      burger(burger),
+      powerUp(powerUp) {
     initializeCats();
     powerUp->initialize();  // Initialize the shield position
+}
+int NyanCat::getLives() const {
+    return playerLives;
+}
+int NyanCat::getRow() const {
+    return -1;  // Not applicable
+}
+int NyanCat::getPlayerCol() const {
+    return player_col;
 }
 void NyanCat::initializeCats() {
     for (int i = 0; i < maxCats; ++i) {
@@ -29,20 +39,7 @@ void NyanCat::move(char direction) {
         if (player_col < cols - 4) player_col++;
     }
 }
-int NyanCat::getLives() const {
-    return playerLives;
-}
-int NyanCat::getRow() const {
-    return -1;  // Not applicable
-}
-int NyanCat::getPlayerCol() const {
-    return player_col;
-}
 bool NyanCat::collide(GameObject* collideobject) {
-    if (burger->isShieldActive()) {
-        std::cout << "Shield is active! No damage taken.\n";
-        return false;  // No collision effect if shield is active
-    }
     // Check if the NyanCat collides with the Cheeseburger
     for (int i = 0; i < maxCats; ++i) {
         if (cats[i].row == rows - 2 && cats[i].col >= player_col && cats[i].col < player_col + 4) {
@@ -60,9 +57,10 @@ bool NyanCat::collide(GameObject* collideobject) {
 ////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////|Regular Nyan Cat Implementation|////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////
-
 RegularNyanCat::RegularNyanCat(int startRow, int startCol, int speed, Cheeseburger* burger, PowerUp* powerUp)
-    : NyanCat(startRow, startCol, speed, burger, powerUp) {}
+    : NyanCat(startRow, startCol, speed, burger, powerUp) {
+    // Any additional initialization for RegularNyanCat
+}
 void RegularNyanCat::fall() {
     // Nyan Cats fall
     for (int i = 0; i < maxCats; ++i) {
@@ -77,18 +75,20 @@ void RegularNyanCat::fall() {
             cats[i].row++;
         }
     }
-    // Shield (PowerUp) falls
     powerUp->fall();
-    // Ensure no collision between PowerUp and Nyan Cats
     for (int i = 0; i < maxCats; ++i) {
         if (powerUp->collidesWith(cats[i].row, cats[i].col)) {
             powerUp->initialize();
             break;
         }
     }
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
 }
 bool RegularNyanCat::collide(GameObject* collideobject) {
+    if (powerUp->collidesWith(rows - 2, player_col)) {  // Burger is on the second last row
+        powerUp->activateShield(burger);  // Activate the shield
+        powerUp->initialize();     // Reset the shield position
+        return false;              // No further collision effects
+    }
     // Check for collision with the Cheeseburger (player)
     for (int i = 0; i < maxCats; ++i) {
         // Check if the cat's position overlaps with the player's position
@@ -117,7 +117,7 @@ void RegularNyanCat::draw() {
                 burger->draw();  // Draw the burger
             }
             else if (i == powerUp->getRow() && j == powerUp->getCol()) {
-                std::cout << "S";  // Draw the shield
+                powerUp->draw();
             }
             else {
                 bool isCatHere = false;
@@ -139,7 +139,7 @@ void RegularNyanCat::draw() {
 ////////////////////////////////////////////////////////////////////////////////////////
 SuperNyanCat::SuperNyanCat(int startRow, int startCol, int speed, Cheeseburger* burger, PowerUp* powerUp)
     : NyanCat(startRow, startCol, speed, burger, powerUp) {
-    // Constructor implementation
+    // Any additional initialization for SuperNyanCat
 }
 void SuperNyanCat::fall() {
     // Nyan Cats fall
@@ -195,7 +195,7 @@ void SuperNyanCat::draw() {
                 burger->draw();
             }
             else if (i == powerUp->getRow() && j == powerUp->getCol()) {
-                std::cout << "S";  // Draw PowerUp
+                powerUp->draw();
             }
             else {
                 bool isCatHere = false;
@@ -216,7 +216,9 @@ void SuperNyanCat::draw() {
 //////////////////////////////|Mega Nyan Cat Implementation|///////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////
 MegaNyanCat::MegaNyanCat(int startRow, int startCol, int speed, Cheeseburger* burger, PowerUp* powerUp)
-    : NyanCat(startRow, startCol, speed, burger, powerUp) {}
+    : NyanCat(startRow, startCol, speed, burger, powerUp) {
+    // Any additional initialization for MegaNyanCat
+}
 void MegaNyanCat::fall() {
     // Nyan Cats fall
     for (int i = 0; i < maxCats; ++i) {
@@ -254,7 +256,7 @@ void MegaNyanCat::draw() {
                 burger->draw();
             }
             else if (i == powerUp->getRow() && j == powerUp->getCol()) {
-                std::cout << "S";  // Draw PowerUp
+                powerUp->draw();
             }
             else {
                 bool isCatHere = false;
@@ -290,6 +292,7 @@ bool MegaNyanCat::collide(GameObject* collideobject) {
     teleport();
     return false; // Default return value for no collision
 }
+
 void MegaNyanCat::teleport() {
     // Teleport to random position
     for (int i = 0; i < maxCats; ++i) {

@@ -1,6 +1,7 @@
 #pragma once
 #include "GameObject.h"
-
+#include <thread>
+#include <chrono>
 class Cheeseburger : public GameObject {
 public:
     Cheeseburger(int x, int y, int speed, int lives, int startCol);
@@ -12,10 +13,16 @@ public:
     void draw();
     void move(char direction);
     void activateShield();
-    void updateShield();
+    int updateShield();
     bool isShieldActive() const;
     friend std::ostream& operator<<(std::ostream& os, const Cheeseburger& burger);
-
+    int getTimer();
+    void loseLife() {
+        if (!shieldActive) {
+            lives--;  // Only decrease lives if the shield is not active
+            std::cout << "Lives remaining: " << lives << "\n";
+        }
+    }
 private:
     int score;
     int lives;

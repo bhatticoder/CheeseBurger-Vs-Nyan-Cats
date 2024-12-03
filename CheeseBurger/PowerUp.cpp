@@ -6,8 +6,14 @@ void PowerUp::initialize() {
     row = -1;                        // Start above the screen
     col = rand() % (cols - 2) + 1;   // Randomize the column
 }
+int PowerUp::getRow() const {
+    return row;
+}
+int PowerUp::getCol() const {
+    return col;
+}
 void PowerUp::fall() {
-    if (row >= rows - 1) {
+    if (row == rows + 6) {  // Adjust condition to account for the last playable row
         row = -1;  // Reset to the top once it reaches the bottom
         col = rand() % (cols - 2) + 1;  // Random horizontal position
     }
@@ -15,32 +21,20 @@ void PowerUp::fall() {
         row++;  // Move down by one row
     }
 }
-
-
-int PowerUp::getRow() const {
-    return row;
+bool PowerUp::collidesWith(int playerRow, int playerCol) {
+    // Check if the shield's position overlaps with the player's position
+    return this->row == playerRow &&
+        this->col >= playerCol &&
+        this->col < playerCol + 4;
 }
-int PowerUp::getCol() const {
-    return col;
-}
-bool PowerUp::collidesWith(int row, int col) {
-    return this->row == row && this->col == col; // Simple collision check
-}
-void PowerUp::activateShield() {
+void PowerUp::activateShield(Cheeseburger* burger) {
     if (!shieldActive) {
         shieldActive = true;
-        std::cout << "Shield Activated!\n";
-        // Start the shield timer (set duration for the shield, for example 10 seconds)
-        std::thread(&PowerUp::shieldTimer, this).detach();  // Run in separate thread
+        std::cout << "Shield Activated! Lives are protected for 10 seconds.\n";
+        // Start the shield timer in a separate thread
+        //std::thread(&Cheeseburger::updateShield, burger).detach();  // Correctly pass the Cheeseburger pointer
     }
 }
-
-void PowerUp::shieldTimer() {
-    int timer = 10;  // Shield duration in seconds
-    while (timer > 0) {
-        std::this_thread::sleep_for(std::chrono::seconds(1));
-        std::cout << "Shield time remaining: " << timer-- << " seconds\n";
-    }
-    shieldActive = false;  // Deactivate shield after time runs out
-    std::cout << "Shield deactivated!\n";
+void PowerUp::drawMultiplier() {
+    cout << "M";
 }

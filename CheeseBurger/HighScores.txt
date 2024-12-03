@@ -1,0 +1,4 @@
+[Easy Mode]
+udasar 120
+[Medium Mode]
+[Hard Mode]

@@ -10,6 +10,7 @@ protected:
     int falling_speed;
     int playerLives;
     int player_col;
+    int player_row;
     Cheeseburger* burger;
     static const int maxCats = 3;  // Maximum number of Nyan Cats
     struct Cat {
@@ -52,7 +53,7 @@ public:
     void fall() override;
     void draw() override;
     bool collide(GameObject* collideobject) override;
-    void teleport();  // Unique feature for MegaNyanCat
+    void teleport();
 };
 
 #endif  // NYANCAT_H

@@ -23,8 +23,9 @@ public:
     bool collidesWith(int catRow, int catCol); // Check if it collides with any object
     int getRow() const;               // Get the current row
     int getCol() const;               // Get the current column
-    void activateShield();
-    void shieldTimer();
+    void activateShield(Cheeseburger* burger);
+    void drawMultiplier();
+    //void shieldTimer();
 };
 
 #endif
