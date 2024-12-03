@@ -1,11 +1,70 @@
 #include "Game.h"
 #include <iostream>
+#include <fstream>   // For file handling
 #include <cstdlib>
-#include <conio.h>    // For _kbhit() and _getch()
-#include <thread>     // For std::this_thread::sleep_for
-#include <chrono>     // For std::chrono::milliseconds
-Game::Game() : easyHighScore(0), mediumHighScore(0), hardHighScore(0) {}
-Game::~Game() {}
+#include <conio.h>   // For _kbhit() and _getch()
+#include <thread>    // For std::this_thread::sleep_for
+#include <chrono>    // For std::chrono::milliseconds
+#include <limits>    // For std::numeric_limits
+const int gridCols = 20;
+const int gridRows = 20;
+const int NUM_SCORES = 5;  // Number of top scores to store
+Game::Game() : easyHighScores{ 0 }, mediumHighScores{ 0 }, hardHighScores{ 0 } {
+    loadHighScores();
+}
+Game::~Game() {
+    saveHighScores(); // Ensure high scores are saved when the object is destroyed
+}
+void Game::loadHighScores() {
+    std::ifstream file("highscores.txt");
+    if (file.is_open()) {
+        for (int i = 0; i < NUM_SCORES; ++i) {
+            file >> easyHighScores[i];
+        }
+        for (int i = 0; i < NUM_SCORES; ++i) {
+            file >> mediumHighScores[i];
+        }
+        for (int i = 0; i < NUM_SCORES; ++i) {
+            file >> hardHighScores[i];
+        }
+        file.close();
+    }
+    else {
+        // Initialize with default scores if no file is found
+        for (int i = 0; i < NUM_SCORES; ++i) {
+            easyHighScores[i] = mediumHighScores[i] = hardHighScores[i] = 0;
+        }
+    }
+}
+void Game::saveHighScores() {
+    std::ofstream file("highscores.txt");
+    if (file.is_open()) {
+        // Write mode names before the scores
+        file << "Easy Mode: ";
+        for (int i = 0; i < NUM_SCORES; ++i) {
+            file << easyHighScores[i] << " ";
+        }
+        file << "\n";
+
+        file << "Medium Mode: ";
+        for (int i = 0; i < NUM_SCORES; ++i) {
+            file << mediumHighScores[i] << " ";
+        }
+        file << "\n";
+
+        file << "Hard Mode: ";
+        for (int i = 0; i < NUM_SCORES; ++i) {
+            file << hardHighScores[i] << " ";
+        }
+        file << "\n";
+
+        file.close();
+        std::cout << "High scores saved successfully!\n";
+    }
+    else {
+        std::cerr << "Error: Could not open highscores.txt for writing!\n";
+    }
+}
 void Game::displayMainMenu() {
     system("cls");
     std::cout << "==========================================\n";
@@ -48,9 +107,22 @@ void Game::displayHighScores() {
     std::cout << "=============================\n";
     std::cout << " High Scores\n";
     std::cout << "=============================\n";
-    std::cout << "1. Easy Mode: " << easyHighScore << "\n";
-    std::cout << "2. Medium Mode: " << mediumHighScore << "\n";
-    std::cout << "3. Hard Mode: " << hardHighScore << "\n";
+
+    std::cout << "Easy Mode:\n";
+    for (int i = 0; i < NUM_SCORES; ++i) {
+        std::cout << (i + 1) << ". " << easyHighScores[i] << "\n";
+    }
+
+    std::cout << "Medium Mode:\n";
+    for (int i = 0; i < NUM_SCORES; ++i) {
+        std::cout << (i + 1) << ". " << mediumHighScores[i] << "\n";
+    }
+
+    std::cout << "Hard Mode:\n";
+    for (int i = 0; i < NUM_SCORES; ++i) {
+        std::cout << (i + 1) << ". " << hardHighScores[i] << "\n";
+    }
+
     std::cout << "=============================\n";
     std::cout << "Press Enter to return to the main menu...";
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -70,83 +142,82 @@ void Game::displayCredits() {
     std::cin.get();
 }
 void Game::startGame(int mode) {
-    // Initialize objects for the game
-    Cheeseburger burger(-1, 0, gridCols / 2, 1, 3);
-    PowerUp powerUp(gridRows, gridCols);
-    powerUp.initialize();
-    ScoreMultiplier multiplier(gridRows, gridCols);
-    multiplier.initialize();
+    std::string modeName;
 
-    // Declare a pointer to the NyanCat object
-    NyanCat* nyanCat = nullptr;
+    // Determine the mode name based on the selected mode
     switch (mode) {
     case 1:
-        nyanCat = new RegularNyanCat(-1, gridCols / 2, 1, &burger, &powerUp, &multiplier);
+        modeName = "Easy";
         break;
     case 2:
-        nyanCat = new SuperNyanCat(-1, gridCols / 2, 1, &burger, &powerUp, &multiplier);
+        modeName = "Medium";
         break;
     case 3:
-        nyanCat = new MegaNyanCat(-1, gridCols / 2, 1, &burger, &powerUp, &multiplier);
+        modeName = "Hard";
         break;
     default:
         std::cout << "Invalid mode selected, exiting...\n";
         return;
     }
-
+    // Initialize objects for the game
+    Cheeseburger burger(-1, 0, gridCols / 2, 1, 3);
+    shield powerUp(gridRows, gridCols);
+    powerUp.initialize();
+    ScoreMultiplier multiplier(gridRows, gridCols);
+    multiplier.initialize();
+    SpeedBooster speed(gridRows, gridCols);
+    speed.initialize();
+    // Declare a pointer to the NyanCat object
+    NyanCat* nyanCat = nullptr;
+    switch (mode) {
+    case 1:
+        nyanCat = new RegularNyanCat(-1, gridCols / 2, 1, &burger, &powerUp, &multiplier, &speed);
+        break;
+    case 2:
+        nyanCat = new SuperNyanCat(-1, gridCols / 2, 1, &burger, &powerUp, &multiplier, &speed);
+        break;
+    case 3:
+        nyanCat = new MegaNyanCat(-1, gridCols / 2, 1, &burger, &powerUp, &multiplier, &speed);
+        break;
+    default:
+        std::cout << "Invalid mode selected, exiting...\n";
+        return;
+    }
     nyanCat->initializeCats();
 
     try {
         while (burger.getLives() > 0) {
-            // Clear the screen
             system("cls");
-
-            // Draw the game elements
+            std::cout << "Mode: " << modeName << "\n"; // Display the mode name
             nyanCat->draw();
-
-            // Make the NyanCats fall and check for collisions
             nyanCat->fall();
             nyanCat->collide(&burger);
 
-            // Display game status (lives, score, shield)
             std::cout << "Lives: " << burger.getLives() << " | Score: " << burger.getScore();
             if (burger.isShieldActive()) {
                 std::cout << " | Shield Active (" << burger.updateShield() << " sec)";
             }
             std::cout << "\n";
 
-            // Check for user input (keyboard events)
             if (_kbhit()) {
                 char input = _getch();
-                if (input == 'q' || input == 'Q') {
-                    break; // Quit the game if 'q' or 'Q' is pressed
-                }
-                if (input == 27) { // ESC key to pause
-                    pauseMenu();
-                }
-                else {
-                    nyanCat->move(input); // Move NyanCat based on the input
-                }
+                if (input == 'q' || input == 'Q') break;
+                if (input == 27) pauseMenu();
+                else nyanCat->move(input);
             }
 
-            // Delay to control game speed
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
         }
     }
     catch (const std::runtime_error& e) {
-        // Handle unexpected errors
-        std::cout << "An error occurred: " << e.what() << "\n";
-        delete nyanCat;  // Manually clean up memory
+        delete nyanCat;
         return;
     }
 
-    // Update the high score after the game ends
-    updateHighScore(mode, burger.getScore());
+    updateHighScores(mode, burger.getScore());
     std::cout << "Game Over!\n";
-    std::this_thread::sleep_for(std::chrono::seconds(2));
-
-    // Clean up memory when the game is over
     delete nyanCat;
+    std::this_thread::sleep_for(std::chrono::seconds(2));
 }
 void Game::pauseMenu() {
     system("cls");
@@ -159,39 +230,83 @@ void Game::pauseMenu() {
     std::cout << "Select your option: ";
     int pauseChoice;
     std::cin >> pauseChoice;
-    if (pauseChoice == 2) throw std::runtime_error("exit");
+    switch (pauseChoice) {
+    case 1:
+        return;  // Resume the game
+    case 2:
+        displayMainMenu();
+        break;
+    default:
+        break;
+    }
 }
-void Game::updateHighScore(int mode, int score) {
-    int& highScore = (mode == 1) ? easyHighScore :
-        (mode == 2) ? mediumHighScore :
-        (mode == 3) ? hardHighScore : throw std::invalid_argument("Invalid mode");
+void Game::updateHighScores(int mode, int score) {
+    std::array<int, 5>* highScores = nullptr;
 
-    if (score > highScore) {
-        highScore = score;
-        std::cout << "New High Score for Mode " << mode << ": " << highScore << "!\n";
+    switch (mode) {
+    case 1:
+        highScores = &easyHighScores;
+        break;
+    case 2:
+        highScores = &mediumHighScores;
+        break;
+    case 3:
+        highScores = &hardHighScores;
+        break;
+    default:
+        std::cerr << "Invalid mode!" << std::endl;
+        return;
+    }
+    // Insert the score in the correct position in the array (maintain sorted order)
+    updateScoreList(*highScores, score);  // Passing array by reference
+    saveHighScores();  // Save after updating
+}
+void Game::updateScoreList(std::array<int, 5>& scores, int score) {
+    // Insert the score in the correct position in the array (maintain sorted order)
+    for (int i = 4; i >= 0; --i) {
+        if (score > scores[i]) {
+            if (i < 4) {
+                scores[i + 1] = scores[i];
+            }
+            scores[i] = score;
+        }
+        else {
+            break;
+        }
     }
 }
 void Game::run() {
-    int choice;
+    int mainMenuChoice;
     while (true) {
         displayMainMenu();
-        std::cin >> choice;
+        std::cin >> mainMenuChoice;
 
-        switch (choice) {
-        case 1:
+        switch (mainMenuChoice) {
+        case 1: {
+            // Start the game and ask for difficulty
             int levelChoice;
-            do {
-                displayLevelMenu();
-                std::cin >> levelChoice;
-            } while (levelChoice < 1 || levelChoice > 4);
-
-            if (levelChoice != 4) startGame(levelChoice);
+            displayLevelMenu();
+            std::cin >> levelChoice;
+            if (levelChoice >= 1 && levelChoice <= 3) {
+                startGame(levelChoice);  // Start the game with selected difficulty
+            }
             break;
-        case 2: displayInstructions(); break;
-        case 3: displayHighScores(); break;
-        case 4: displayCredits(); break;
-        case 5: std::cout << "Thanks for playing! Goodbye.\n"; return;
-        default: std::cout << "Invalid option. Try again.\n"; break;
+        }
+        case 2:
+            displayInstructions();  // Show game instructions
+            break;
+        case 3:
+            displayHighScores();  // Show high scores
+            break;
+        case 4:
+            displayCredits();  // Show credits
+            break;
+        case 5:
+            std::cout << "Exiting the game. Goodbye!\n";
+            return;  // Exit the game
+        default:
+            std::cout << "Invalid option! Please try again.\n";
+            break;
         }
     }
 }

@@ -1,29 +1,50 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include <string>
-#include "NyanCat.h"
-#include "GameObject.h"
 #include "Cheeseburger.h"
+#include "NyanCat.h"
 #include "PowerUp.h"
-const int gridCols = 20;
-const int gridRows = 20;
+#include <string>
+#include <array>
+#include <stdexcept>
+
 class Game {
+private:
+    // Array to store last 5 high scores for each difficulty
+    std::array<int, 5> easyHighScores;
+    std::array<int, 5> mediumHighScores;
+    std::array<int, 5> hardHighScores;
+
+    // Helper functions for high score management
+    void saveHighScores();
+    void loadHighScores();
+    void updateScoreList(std::array<int, 5>& scores, int score);
+
+    // Constants for grid dimensions
+    static const int gridCols = 20;
+    static const int gridRows = 20;
+
 public:
+    // Constructor and Destructor
     Game();
     ~Game();
-    void run();
-private:
-    int easyHighScore;
-    int mediumHighScore;
-    int hardHighScore;
+
+    // Main Menu and Submenus
     void displayMainMenu();
     void displayLevelMenu();
     void displayInstructions();
     void displayHighScores();
-    void startGame(int mode);
     void displayCredits();
+
+    // Game Logic
+    void startGame(int mode);
     void pauseMenu();
-    void updateHighScore(int mode, int score);
+
+    // High Score Management
+    void updateHighScores(int mode, int score);
+
+    // Game Runner
+    void run();
 };
-#endif  // GAME_H
+
+#endif // GAME_H

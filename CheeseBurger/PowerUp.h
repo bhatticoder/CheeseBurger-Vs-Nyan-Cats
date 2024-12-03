@@ -6,7 +6,7 @@
 #include <cstdlib>
 #include <thread>
 #include <chrono>
-class PowerUp : public GameObject {
+class shield : public GameObject {
 private:
     int row;  // Current row position
     int col;  // Current column position
@@ -14,7 +14,7 @@ private:
     int cols; // Total columns (game boundary)
     bool shieldActive = false;
 public:
-    PowerUp(int totalRows, int totalCols);
+    shield(int totalRows, int totalCols);
     bool collide(GameObject* other)override { return false; }
     void move(char dir)override { cout << "Nothing"; }
     void draw()override { cout << "S"; }
@@ -41,5 +41,19 @@ public:
     bool collide(GameObject* other) override { return false; }
     void move(char dir) override { cout << ""; }
 };
-
+class SpeedBooster : public GameObject {
+private:
+    int row, col;
+public:
+    SpeedBooster(int totalRows, int totalCols);
+    void initialize();
+    void fall();
+    int getRow()const;
+    int getCol()const;
+    bool collidesWith(int playerRow, int playerCol);
+    void activateSpeedBoost(Cheeseburger* burger);
+    bool collide(GameObject* burger)override { return false; }
+    void move(char dir) override;
+    void draw() override;           // Draw "B" for Speed Booster
+};
 #endif

@@ -16,10 +16,11 @@ protected:
         int col;
     };
     Cat cats[maxCats];
-    PowerUp* powerUp;
+    shield* powerUp;
     ScoreMultiplier* multiplier;
+    SpeedBooster* booster;
 public:
-    NyanCat(int startRow, int startCol, int speed, Cheeseburger* burger, PowerUp* powerUp, ScoreMultiplier* multiplier);
+    NyanCat(int startRow, int startCol, int speed, Cheeseburger* burger, shield* powerUp, ScoreMultiplier* multiplier, SpeedBooster* booster);
     virtual void fall() = 0;
     virtual bool collide(GameObject* collideobject) = 0;
     void move(char direction) override;
@@ -31,7 +32,7 @@ public:
 
 class RegularNyanCat : public NyanCat {
 public:
-    RegularNyanCat(int startRow, int startCol, int speed, Cheeseburger* burger, PowerUp* powerUp, ScoreMultiplier* multiplier);
+    RegularNyanCat(int startRow, int startCol, int speed, Cheeseburger* burger, shield* powerUp, ScoreMultiplier* multiplier, SpeedBooster* booster);
     void fall() override;
     void draw() override;
     bool collide(GameObject* collideobject) override;
@@ -39,7 +40,7 @@ public:
 
 class SuperNyanCat : public NyanCat {
 public:
-    SuperNyanCat(int startRow, int startCol, int speed, Cheeseburger* burger, PowerUp* powerUp, ScoreMultiplier* multiplier);
+    SuperNyanCat(int x, int y, int speed, Cheeseburger* burger, shield* shieldObj, ScoreMultiplier* multiplier, SpeedBooster* booster);
     void fall() override;
     void draw() override;
     bool collide(GameObject* collideobject) override;
@@ -47,7 +48,7 @@ public:
 
 class MegaNyanCat : public NyanCat {
 public:
-    MegaNyanCat(int startRow, int startCol, int speed, Cheeseburger* burger, PowerUp* powerUp, ScoreMultiplier* multiplier);
+    MegaNyanCat(int startRow, int startCol, int speed, Cheeseburger* burger, shield* powerUp, ScoreMultiplier* multiplier, SpeedBooster* booster);
     void fall() override;
     void draw() override;
     bool collide(GameObject* collideobject) override;

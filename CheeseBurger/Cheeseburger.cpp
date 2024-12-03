@@ -1,6 +1,8 @@
 #include "Cheeseburger.h"
 #include <iostream>
 #include <algorithm>
+#include <chrono>
+#include <thread>
 
 using namespace std;
 
@@ -27,6 +29,7 @@ bool Cheeseburger::collide(GameObject* collideobject) {
     }
     return false;
 }
+
 // Get lives
 int Cheeseburger::getLives() const {
     return lives;
@@ -57,6 +60,8 @@ void Cheeseburger::move(char direction) {
     }
     std::cout << "Cheeseburger moved to column: " << player_col << "\n";
 }
+
+// Manage shield timer and state
 int Cheeseburger::getTimer() {
     if (shieldActive) {
         if (shieldTimer > 0) {
@@ -64,15 +69,20 @@ int Cheeseburger::getTimer() {
         }
         if (shieldTimer == 0) {
             shieldActive = false; // Deactivate the shield after time runs out
+            std::cout << "Shield deactivated.\n";
         }
     }
     return shieldTimer; // Return the remaining shield time
 }
-// Activate shield
+
+// Activate shield and set timer
 void Cheeseburger::activateShield() {
     shieldActive = true;
-    shieldTimer = 10; // Reset shield duration
+    shieldTimer = 10; // Set shield duration to 10 seconds
+    std::cout << "Shield activated! Lives are protected for 10 seconds.\n";
 }
+
+// Update shield status in real time
 int Cheeseburger::updateShield() {
     if (shieldActive) {
         std::this_thread::sleep_for(std::chrono::seconds(1));  // Wait for 1 second
@@ -85,14 +95,28 @@ int Cheeseburger::updateShield() {
     return 0;
 }
 
+// Check if shield is active
 bool Cheeseburger::isShieldActive() const {
     return shieldActive;
 }
 
-// Overload output operator
+// Increase speed (for SpeedBooster or other power-ups)
+void Cheeseburger::increaseSpeed() {
+    speed = 4; // Temporary speed boost
+    std::cout << "Speed Boost Activated! Speed increased to 4.\n";
+}
+
+// Reset speed to default
+void Cheeseburger::resetSpeed() {
+    speed = defaultSpeed; // Reset speed to the normal value
+    std::cout << "Speed Reset. Current speed: " << speed << std::endl;
+}
+
+// Overload output operator to display Cheeseburger state
 std::ostream& operator<<(std::ostream& os, const Cheeseburger& burger) {
     os << "Cheeseburger [Lives: " << burger.lives
         << ", Score: " << burger.score
-        << ", Column: " << burger.player_col << "]";
+        << ", Column: " << burger.player_col
+        << ", Speed: " << burger.speed << "]";
     return os;
 }
