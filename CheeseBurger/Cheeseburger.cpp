@@ -6,7 +6,8 @@
 using namespace std;
 Cheeseburger::Cheeseburger(int x, int y, int speed, int lives, int startCol)
     : GameObject(x, y, 4, 2), score(0), lives(lives), speed(speed), player_col(startCol),
-    shieldActive(false), shieldTimer(0), speedBoostActive(false) {}
+    shieldActive(false), shieldTimer(0), speedBoostActive(false) {
+}
 // Update score
 void Cheeseburger::updateScore(int points) {
     score += points;
@@ -46,13 +47,15 @@ void Cheeseburger::draw() {
 }
 // Move cheeseburger based on input direction
 void Cheeseburger::move(char direction) {
-    int moveDistance = (speed > 1 ? speed : 1); // Use boosted speed if active
+    int moveDistance = (speedBoostActive ? speed : 1); // Use boosted speed if active
+
     if (direction == 'a' || direction == 'A') {
-        player_col = std::max(0, player_col - moveDistance);  // Move left
+        player_col = std::max(0, player_col - moveDistance); // Move left
     }
     else if (direction == 'd' || direction == 'D') {
-        player_col = std::min(cols - 1, player_col + moveDistance);  // Move right
+        player_col = std::min(cols - 1, player_col + moveDistance); // Move right
     }
+
     std::cout << "Cheeseburger moved to column: " << player_col << "\n";
 }
 void Cheeseburger::activateSpeedBoost() {
@@ -61,9 +64,9 @@ void Cheeseburger::activateSpeedBoost() {
         speed = 8; // Set high speed for the boost
         std::cout << "Speed Boost Activated! Speed increased to 8.\n";
 
-        // Start a timer to deactivate the speed boost after 5 seconds
+        // Start a timer to deactivate the speed boost after 10 seconds
         std::thread([this]() {
-            std::this_thread::sleep_for(std::chrono::seconds(5));
+            std::this_thread::sleep_for(std::chrono::seconds(10));
             deactivateSpeedBoost();
             }).detach();
     }

@@ -1,7 +1,8 @@
 #include "PowerUp.h"
 shield::shield(int totalRows, int totalCols)
     : GameObject(-1, 0, totalRows, totalCols), // Pass initial positions and dimensions to GameObject
-    rows(totalRows), cols(totalCols), row(-1), col(0) {}
+    rows(totalRows), cols(totalCols), row(-1), col(0) {
+}
 void shield::initialize() {
     row = -1;                        // Start above the screen
     col = rand() % 3 * (cols - 2) + 1;   // Randomize the column
@@ -70,7 +71,8 @@ int ScoreMultiplier::getCol() const {
 //////////////////////////////////////////////////////////////
 SpeedBooster::SpeedBooster(int totalRows, int totalCols)
     : GameObject(-1, rand() % (totalCols - 2) + 1, totalRows, totalCols),
-    row(-1), col(rand() % (totalCols - 2) + 1) {}
+    row(-1), col(rand() % (totalCols - 2) + 1) {
+}
 
 void SpeedBooster::initialize() {
     row = -1;                      // Start above the screen
@@ -96,20 +98,13 @@ bool SpeedBooster::collidesWith(int playerRow, int playerCol) {
 
 void SpeedBooster::activateSpeedBoost(Cheeseburger* burger) {
     if (burger) {
-        burger->increaseSpeed(); // Temporarily boost speed
+        burger->activateSpeedBoost(); // Temporarily boost speed
         std::cout << "Speed Booster Activated! Burger speed increased temporarily.\n";
-
-        // Start a timer to reset speed after 10 seconds
-        std::thread([burger]() {
-            std::this_thread::sleep_for(std::chrono::seconds(10));
-            burger->resetSpeed(); // Reset speed to default
-            std::cout << "Speed Booster Expired! Burger speed reset.\n";
-            }).detach();
     }
 }
 void SpeedBooster::move(char direction) {
     // Ensure that burger is not null
-    Cheeseburger* burger =nullptr;
+    Cheeseburger* burger = nullptr;
     if (burger == nullptr) {
         std::cerr << "Error: Cheeseburger is not initialized." << std::endl;
         return;  // Exit if burger is not set

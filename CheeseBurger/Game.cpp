@@ -97,6 +97,8 @@ void Game::displayInstructions() {
     std::cout << "2. Avoid getting hit by falling Nyan Cats.\n";
     std::cout << "3. Catch power-ups to boost your score.\n";
     std::cout << "4. Press 'Q' to quit the game.\n";
+    std::cout << "4. Press 'ESC' to pause the game.\n";
+
     std::cout << "=============================\n";
     std::cout << "Press Enter to return to the main menu...";
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -133,9 +135,8 @@ void Game::displayCredits() {
     std::cout << "=============================\n";
     std::cout << " Credits\n";
     std::cout << "=============================\n";
-    std::cout << "Game Design: Muhammad Mudasar Bhatti\n";
-    std::cout << "Programming: Your Name Here\n";
-    std::cout << "Art & Graphics: Team Name Here\n";
+    std::cout << "Muhammad Talha   23F-0511\n";
+    std::cout << "Abdul Rafay      23F-0511\n";
     std::cout << "=============================\n";
     std::cout << "Press Enter to return to the main menu...";
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -158,6 +159,7 @@ void Game::startGame(int mode) {
         std::cout << "Invalid mode selected, exiting...\n";
         return;
     }
+
     // Initialize objects for the game
     Cheeseburger burger(-1, 0, gridCols / 2, 1, 3);
     shield powerUp(gridRows, gridCols);
@@ -166,6 +168,7 @@ void Game::startGame(int mode) {
     multiplier.initialize();
     SpeedBooster speed(gridRows, gridCols);
     speed.initialize();
+
     // Declare a pointer to the NyanCat object
     NyanCat* nyanCat = nullptr;
     switch (mode) {
@@ -186,20 +189,31 @@ void Game::startGame(int mode) {
 
     try {
         while (burger.getLives() > 0) {
+            // Clear the screen
             system("cls");
+
+            // Display game status
+            cout << "CHEESE BURGER VS NYAN CAT\n";
             nyanCat->displayStatus();
             std::cout << "Mode: " << modeName << "\n"; // Display the mode name
+            std::cout << "Speed Boost: " << (burger.isSpeedBoostActive() ? "Active" : "Inactive") << "\n"; // Show speed boost status
+            std::cout << "Shield: " << (burger.isShieldActive() ? "Active" : "Inactive") << "\n";         // Show shield status
+
+            // Game mechanics
             nyanCat->draw();
-            nyanCat->fall();
-            nyanCat->collide(&burger);
+            nyanCat->fall(); // Move objects (nyan cats, power-ups) down
+            nyanCat->collide(&burger); // Handle collisions with the cheeseburger
             std::cout << "\n";
-            if (_kbhit()) {
+
+            // Handle user input
+            if (_kbhit()) { // Check for keyboard input
                 char input = _getch();
-                if (input == 'q' || input == 'Q') break;
-                if (input == 27) pauseMenu();
-                else nyanCat->move(input);
+                if (input == 'q' || input == 'Q') break; // Quit game
+                if (input == 27) pauseMenu();           // Pause menu (ESC key)
+                else nyanCat->move(input);              // Move based on user input
             }
 
+            // Game delay to control frame rate
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
         }
     }
@@ -207,9 +221,13 @@ void Game::startGame(int mode) {
         delete nyanCat;
         return;
     }
+
+    // Update high scores after the game ends
     updateHighScores(mode, burger.getScore());
     std::cout << "Game Over!\n";
     delete nyanCat;
+
+    // Pause briefly before returning to the main menu
     std::this_thread::sleep_for(std::chrono::seconds(2));
 }
 void Game::pauseMenu() {

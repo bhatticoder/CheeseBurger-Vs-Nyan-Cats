@@ -37,11 +37,8 @@ void NyanCat::move(char direction) {
     }
 }
 void NyanCat::displayStatus() {
-    system("clear"); // Clear the console screen (use "cls" on Windows)
     std::cout << "Score: " << burger->getScore()
         << " | Lives: " << burger->getLives()
-        << " | Shield: " << (burger->isShieldActive() ? "Active" : "Inactive")
-        << " | Speed Booster: " << (burger->isSpeedBoostActive() ? "Active" : "Inactive")
         << "\n";
 }
 bool NyanCat::collide(GameObject* collideobject) {

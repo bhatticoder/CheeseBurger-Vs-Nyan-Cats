@@ -18,7 +18,7 @@ public:
     void setPlayerCol(int col) {
         player_col = col;
     }
-    int getPlayerCol() const{
+    int getPlayerCol() const {
         return player_col;
     }
     // Getters
@@ -35,6 +35,7 @@ public:
     bool isShieldActive() const;
     void deactivateShield();
     int updateShield();
+    void displayStatus() const;
     // Overload output operator for Cheeseburger state
     friend std::ostream& operator<<(std::ostream& os, const Cheeseburger& burger);
     // Speed control methods
