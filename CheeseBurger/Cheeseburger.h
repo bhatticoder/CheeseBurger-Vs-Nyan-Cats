@@ -34,14 +34,7 @@ public:
     void activateShield();
     bool isShieldActive() const;
     void deactivateShield();
-    int updateShield();
-    void displayStatus() const;
-    // Overload output operator for Cheeseburger state
-    friend std::ostream& operator<<(std::ostream& os, const Cheeseburger& burger);
     // Speed control methods
-    void increaseSpeed(); // Boost speed temporarily
-    void resetSpeed();    // Reset speed to normal
-
     void activateSpeedBoost();
     void deactivateSpeedBoost();
     bool isSpeedBoostActive()const;

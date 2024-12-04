@@ -30,7 +30,6 @@ public:
     int getPlayerCol() const;
     void displayStatus();
 };
-
 class RegularNyanCat : public NyanCat {
 public:
     RegularNyanCat(int startRow, int startCol, int speed, Cheeseburger* burger, shield* powerUp, ScoreMultiplier* multiplier, SpeedBooster* booster);
@@ -38,7 +37,6 @@ public:
     void draw() override;
     bool collide(GameObject* collideobject) override;
 };
-
 class SuperNyanCat : public NyanCat {
 public:
     SuperNyanCat(int x, int y, int speed, Cheeseburger* burger, shield* shieldObj, ScoreMultiplier* multiplier, SpeedBooster* booster);
@@ -46,7 +44,6 @@ public:
     void draw() override;
     bool collide(GameObject* collideobject) override;
 };
-
 class MegaNyanCat : public NyanCat {
 public:
     MegaNyanCat(int startRow, int startCol, int speed, Cheeseburger* burger, shield* powerUp, ScoreMultiplier* multiplier, SpeedBooster* booster);
@@ -55,5 +52,4 @@ public:
     bool collide(GameObject* collideobject) override;
     void teleport();
 };
-
 #endif  // NYANCAT_H

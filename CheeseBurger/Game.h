@@ -1,6 +1,6 @@
 #ifndef GAME_H
 #define GAME_H
-
+#include "GameObject.h"
 #include "Cheeseburger.h"
 #include "NyanCat.h"
 #include "PowerUp.h"
@@ -42,7 +42,7 @@ public:
 
     // High Score Management
     void updateHighScores(int mode, int score);
-
+    //void setConsoleSize(int width, int height);
     // Game Runner
     void run();
 };

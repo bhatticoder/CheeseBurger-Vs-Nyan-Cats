@@ -15,56 +15,10 @@ Game::Game() : easyHighScores{ 0 }, mediumHighScores{ 0 }, hardHighScores{ 0 } {
 Game::~Game() {
     saveHighScores(); // Ensure high scores are saved when the object is destroyed
 }
-void Game::loadHighScores() {
-    std::ifstream file("highscores.txt");
-    if (file.is_open()) {
-        for (int i = 0; i < NUM_SCORES; ++i) {
-            file >> easyHighScores[i];
-        }
-        for (int i = 0; i < NUM_SCORES; ++i) {
-            file >> mediumHighScores[i];
-        }
-        for (int i = 0; i < NUM_SCORES; ++i) {
-            file >> hardHighScores[i];
-        }
-        file.close();
-    }
-    else {
-        // Initialize with default scores if no file is found
-        for (int i = 0; i < NUM_SCORES; ++i) {
-            easyHighScores[i] = mediumHighScores[i] = hardHighScores[i] = 0;
-        }
-    }
-}
-void Game::saveHighScores() {
-    std::ofstream file("highscores.txt");
-    if (file.is_open()) {
-        // Write mode names before the scores
-        file << "Easy Mode: ";
-        for (int i = 0; i < NUM_SCORES; ++i) {
-            file << easyHighScores[i] << " ";
-        }
-        file << "\n";
-
-        file << "Medium Mode: ";
-        for (int i = 0; i < NUM_SCORES; ++i) {
-            file << mediumHighScores[i] << " ";
-        }
-        file << "\n";
-
-        file << "Hard Mode: ";
-        for (int i = 0; i < NUM_SCORES; ++i) {
-            file << hardHighScores[i] << " ";
-        }
-        file << "\n";
-
-        file.close();
-        std::cout << "High scores saved successfully!\n";
-    }
-    else {
-        std::cerr << "Error: Could not open highscores.txt for writing!\n";
-    }
-}
+//void Game::setConsoleSize(int width, int height) {
+//    std::string command = "mode con: cols=" + std::to_string(width) + " lines=" + std::to_string(height);
+//    system(command.c_str());
+//}
 void Game::displayMainMenu() {
     system("cls");
     std::cout << "==========================================\n";
@@ -142,6 +96,69 @@ void Game::displayCredits() {
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     std::cin.get();
 }
+void Game::loadHighScores() {
+    std::ifstream file("highscores.txt");
+    if (file.is_open()) {
+        for (int i = 0; i < NUM_SCORES; ++i) {
+            file >> easyHighScores[i];
+        }
+        for (int i = 0; i < NUM_SCORES; ++i) {
+            file >> mediumHighScores[i];
+        }
+        for (int i = 0; i < NUM_SCORES; ++i) {
+            file >> hardHighScores[i];
+        }
+        file.close();
+    }
+    else {
+        // Initialize with default scores if no file is found
+        for (int i = 0; i < NUM_SCORES; ++i) {
+            easyHighScores[i] = mediumHighScores[i] = hardHighScores[i] = 0;
+        }
+    }
+}
+void Game::pauseMenu() {
+    system("cls");
+    std::cout << "=============================\n";
+    std::cout << " Game Paused\n";
+    std::cout << "=============================\n";
+    std::cout << "1. Resume Game\n";
+    std::cout << "2. Exit to Main Menu\n";
+    std::cout << "=============================\n";
+    std::cout << "Select your option: ";
+    int pauseChoice;
+    std::cin >> pauseChoice;
+    if (pauseChoice == 2) throw std::runtime_error("exit");
+}
+void Game::saveHighScores() {
+    std::ofstream file("highscores.txt");
+    if (file.is_open()) {
+        // Write mode names before the scores
+        file << "Easy Mode: ";
+        for (int i = 0; i < NUM_SCORES; ++i) {
+            file << easyHighScores[i] << " ";
+        }
+        file << "\n";
+
+        file << "Medium Mode: ";
+        for (int i = 0; i < NUM_SCORES; ++i) {
+            file << mediumHighScores[i] << " ";
+        }
+        file << "\n";
+
+        file << "Hard Mode: ";
+        for (int i = 0; i < NUM_SCORES; ++i) {
+            file << hardHighScores[i] << " ";
+        }
+        file << "\n";
+
+        file.close();
+        std::cout << "High scores saved successfully!\n";
+    }
+    else {
+        std::cerr << "Error: Could not open highscores.txt for writing!\n";
+    }
+}
 void Game::startGame(int mode) {
     std::string modeName;
     // Determine the mode name based on the selected mode
@@ -159,7 +176,6 @@ void Game::startGame(int mode) {
         std::cout << "Invalid mode selected, exiting...\n";
         return;
     }
-
     // Initialize objects for the game
     Cheeseburger burger(-1, 0, gridCols / 2, 1, 3);
     shield powerUp(gridRows, gridCols);
@@ -168,7 +184,6 @@ void Game::startGame(int mode) {
     multiplier.initialize();
     SpeedBooster speed(gridRows, gridCols);
     speed.initialize();
-
     // Declare a pointer to the NyanCat object
     NyanCat* nyanCat = nullptr;
     switch (mode) {
@@ -186,25 +201,21 @@ void Game::startGame(int mode) {
         return;
     }
     nyanCat->initializeCats();
-
     try {
         while (burger.getLives() > 0) {
             // Clear the screen
             system("cls");
-
             // Display game status
             cout << "CHEESE BURGER VS NYAN CAT\n";
             nyanCat->displayStatus();
             std::cout << "Mode: " << modeName << "\n"; // Display the mode name
             std::cout << "Speed Boost: " << (burger.isSpeedBoostActive() ? "Active" : "Inactive") << "\n"; // Show speed boost status
             std::cout << "Shield: " << (burger.isShieldActive() ? "Active" : "Inactive") << "\n";         // Show shield status
-
             // Game mechanics
             nyanCat->draw();
             nyanCat->fall(); // Move objects (nyan cats, power-ups) down
             nyanCat->collide(&burger); // Handle collisions with the cheeseburger
             std::cout << "\n";
-
             // Handle user input
             if (_kbhit()) { // Check for keyboard input
                 char input = _getch();
@@ -221,27 +232,12 @@ void Game::startGame(int mode) {
         delete nyanCat;
         return;
     }
-
     // Update high scores after the game ends
     updateHighScores(mode, burger.getScore());
     std::cout << "Game Over!\n";
     delete nyanCat;
-
     // Pause briefly before returning to the main menu
     std::this_thread::sleep_for(std::chrono::seconds(2));
-}
-void Game::pauseMenu() {
-    system("cls");
-    std::cout << "=============================\n";
-    std::cout << " Game Paused\n";
-    std::cout << "=============================\n";
-    std::cout << "1. Resume Game\n";
-    std::cout << "2. Exit to Main Menu\n";
-    std::cout << "=============================\n";
-    std::cout << "Select your option: ";
-    int pauseChoice;
-    std::cin >> pauseChoice;
-    if (pauseChoice == 2) throw std::runtime_error("exit");
 }
 void Game::updateHighScores(int mode, int score) {
     std::array<int, 5>* highScores = nullptr;

@@ -110,7 +110,7 @@ void SpeedBooster::move(char direction) {
         return;  // Exit if burger is not set
     }
     // Calculate move distance based on shield status
-    int moveDistance = (burger->isShieldActive() ? 4 : 1);  // If shield is active, move 4; else move 1.
+    int moveDistance = (burger->isShieldActive() ? 1 : 4);  // If shield is active, move 4; else move 1.
     if (direction == 'a' || direction == 'A') {
         // Move left by moveDistance but ensure it doesn't go out of bounds
         burger->setPlayerCol(std::max(0, burger->getPlayerCol() - moveDistance));

@@ -24,7 +24,6 @@ public:
     int getRow() const;               // Get the current row
     int getCol() const;               // Get the current column
     void activateShield(Cheeseburger* burger);
-    //void shieldTimer();
 };
 class ScoreMultiplier : public GameObject {
 private:

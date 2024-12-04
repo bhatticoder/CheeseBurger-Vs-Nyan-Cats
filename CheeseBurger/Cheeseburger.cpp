@@ -71,19 +71,16 @@ void Cheeseburger::activateSpeedBoost() {
             }).detach();
     }
 }
-
 // Deactivate speed boost
 void Cheeseburger::deactivateSpeedBoost() {
     speedBoostActive = false;
     speed = 1; // Reset to default speed
     std::cout << "Speed Boost Deactivated. Speed reset to 1.\n";
 }
-
 // Check if speed boost is active
 bool Cheeseburger::isSpeedBoostActive() const {
     return speedBoostActive;
 }
-
 // Activate shield and set timer
 void Cheeseburger::activateShield() {
     if (!shieldActive) {
@@ -101,37 +98,6 @@ void Cheeseburger::deactivateShield() {
     shieldActive = false;
     std::cout << "Shield deactivated! Burger is no longer protected.\n";
 }
-// Update shield status in real time
-int Cheeseburger::updateShield() {
-    if (shieldActive) {
-        std::this_thread::sleep_for(std::chrono::seconds(1));  // Wait for 1 second
-        shieldTimer--;  // Decrease shield time
-        if (shieldTimer <= 0) {
-            shieldActive = false;  // Shield expires after time runs out
-            std::cout << "Shield deactivated.\n";
-        }
-    }
-    return 0;
-}
-// Check if shield is active
 bool Cheeseburger::isShieldActive() const {
     return shieldActive;
-}
-// Increase speed (for SpeedBooster or other power-ups)
-void Cheeseburger::increaseSpeed() {
-    speed = 4; // Temporary speed boost
-    std::cout << "Speed Boost Activated! Speed increased to 4.\n";
-}
-// Reset speed to default
-void Cheeseburger::resetSpeed() {
-    speed = defaultSpeed; // Reset speed to the normal value
-    std::cout << "Speed Reset. Current speed: " << speed << std::endl;
-}
-// Overload output operator to display Cheeseburger state
-std::ostream& operator<<(std::ostream& os, const Cheeseburger& burger) {
-    os << "Cheeseburger [Lives: " << burger.lives
-        << ", Score: " << burger.score
-        << ", Column: " << burger.player_col
-        << ", Speed: " << burger.speed << "]";
-    return os;
 }
