@@ -28,6 +28,7 @@ public:
     int getLives() const;
     int getRow() const;
     int getPlayerCol() const;
+    void displayStatus();
 };
 
 class RegularNyanCat : public NyanCat {

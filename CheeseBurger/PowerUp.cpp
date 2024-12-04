@@ -28,11 +28,8 @@ bool shield::collidesWith(int playerRow, int playerCol) {
         this->col < playerCol + 4;
 }
 void shield::activateShield(Cheeseburger* burger) {
-    if (!shieldActive) {
-        shieldActive = true;
-        std::cout << "Shield Activated! Lives are protected for 10 seconds.\n";
-        // Start the shield timer in a separate thread
-        std::thread(&Cheeseburger::updateShield, burger).detach();  // Correctly pass the Cheeseburger pointer
+    if (!burger->isShieldActive()) {
+        burger->activateShield(); // Activate shield on burger
     }
 }
 //////////////////////////////////////////////////////////////
@@ -71,8 +68,6 @@ int ScoreMultiplier::getCol() const {
     return col;
 }
 //////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////
 SpeedBooster::SpeedBooster(int totalRows, int totalCols)
     : GameObject(-1, rand() % (totalCols - 2) + 1, totalRows, totalCols) {}
 void SpeedBooster::initialize() {
@@ -96,8 +91,8 @@ bool SpeedBooster::collidesWith(int playerRow, int playerCol) {
         this->col >= playerCol &&
         this->col < playerCol + 4;
 }
+
 void SpeedBooster::activateSpeedBoost(Cheeseburger* burger) {
-    // Ensure the object is a Cheeseburger and boost its speed
     if (burger) {
         burger->increaseSpeed(); // Temporarily boost speed
         std::cout << "Speed Booster Activated! Burger speed increased temporarily.\n";
@@ -122,10 +117,12 @@ void SpeedBooster::move(char direction) {
     if (direction == 'a' || direction == 'A') {
         // Move left by moveDistance but ensure it doesn't go out of bounds
         burger->setPlayerCol(std::max(0, burger->getPlayerCol() - moveDistance));
+        burger->setPlayerCol(4);
     }
     else if (direction == 'd' || direction == 'D') {
         // Move right by moveDistance but ensure it doesn't go out of bounds
         burger->setPlayerCol(std::min(cols - 1, burger->getPlayerCol() + moveDistance));
+        burger->setPlayerCol(4);
     }
 }
 void SpeedBooster::draw() {

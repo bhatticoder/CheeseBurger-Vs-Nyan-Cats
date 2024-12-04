@@ -143,7 +143,6 @@ void Game::displayCredits() {
 }
 void Game::startGame(int mode) {
     std::string modeName;
-
     // Determine the mode name based on the selected mode
     switch (mode) {
     case 1:
@@ -188,17 +187,12 @@ void Game::startGame(int mode) {
     try {
         while (burger.getLives() > 0) {
             system("cls");
+            nyanCat->displayStatus();
             std::cout << "Mode: " << modeName << "\n"; // Display the mode name
             nyanCat->draw();
             nyanCat->fall();
             nyanCat->collide(&burger);
-
-            std::cout << "Lives: " << burger.getLives() << " | Score: " << burger.getScore();
-            if (burger.isShieldActive()) {
-                std::cout << " | Shield Active (" << burger.updateShield() << " sec)";
-            }
             std::cout << "\n";
-
             if (_kbhit()) {
                 char input = _getch();
                 if (input == 'q' || input == 'Q') break;

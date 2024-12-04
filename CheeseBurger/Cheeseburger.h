@@ -12,6 +12,7 @@ private:
     bool shieldActive;
     int shieldTimer;
     const int defaultSpeed = 1;
+    int speedBoostActive;
 public:
     Cheeseburger(int x, int y, int speed, int lives, int startCol);
     void setPlayerCol(int col) {
@@ -32,11 +33,15 @@ public:
     void move(char direction);
     void activateShield();
     bool isShieldActive() const;
-    int getTimer();
+    void deactivateShield();
     int updateShield();
     // Overload output operator for Cheeseburger state
     friend std::ostream& operator<<(std::ostream& os, const Cheeseburger& burger);
     // Speed control methods
     void increaseSpeed(); // Boost speed temporarily
     void resetSpeed();    // Reset speed to normal
+
+    void activateSpeedBoost();
+    void deactivateSpeedBoost();
+    bool isSpeedBoostActive()const;
 };

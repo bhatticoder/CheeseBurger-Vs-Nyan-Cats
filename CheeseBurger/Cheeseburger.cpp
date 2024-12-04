@@ -4,10 +4,9 @@
 #include <chrono>
 #include <thread>
 using namespace std;
-// Constructor
 Cheeseburger::Cheeseburger(int x, int y, int speed, int lives, int startCol)
     : GameObject(x, y, 4, 2), score(0), lives(lives), speed(speed), player_col(startCol),
-    shieldActive(false), shieldTimer(0) {}
+    shieldActive(false), shieldTimer(0), speedBoostActive(false) {}
 // Update score
 void Cheeseburger::updateScore(int points) {
     score += points;
@@ -16,8 +15,13 @@ void Cheeseburger::updateScore(int points) {
 // Handle collisions
 bool Cheeseburger::collide(GameObject* collideobject) {
     if (collideobject) {
-        lives -= 1;
-        std::cout << "Collision detected! Lives remaining: " << lives << std::endl;
+        if (shieldActive) {
+            std::cout << "Collision detected, but shield is active! Lives are protected.\n";
+        }
+        else {
+            lives -= 1;
+            std::cout << "Collision detected! Lives remaining: " << lives << std::endl;
+        }
     }
     if (lives <= 0) {
         std::cout << "Game Over!" << std::endl;
@@ -25,7 +29,6 @@ bool Cheeseburger::collide(GameObject* collideobject) {
     }
     return false;
 }
-// Get lives
 int Cheeseburger::getLives() const {
     return lives;
 }
@@ -43,32 +46,57 @@ void Cheeseburger::draw() {
 }
 // Move cheeseburger based on input direction
 void Cheeseburger::move(char direction) {
+    int moveDistance = (speed > 1 ? speed : 1); // Use boosted speed if active
     if (direction == 'a' || direction == 'A') {
-        player_col = std::max(0, player_col - speed);  // Move left
+        player_col = std::max(0, player_col - moveDistance);  // Move left
     }
     else if (direction == 'd' || direction == 'D') {
-        player_col = std::min(cols - 1, player_col + speed);  // Move right
+        player_col = std::min(cols - 1, player_col + moveDistance);  // Move right
     }
     std::cout << "Cheeseburger moved to column: " << player_col << "\n";
 }
-// Manage shield timer and state
-int Cheeseburger::getTimer() {
-    if (shieldActive) {
-        if (shieldTimer > 0) {
-            shieldTimer--; // Decrease shield time
-        }
-        if (shieldTimer == 0) {
-            shieldActive = false; // Deactivate the shield after time runs out
-            std::cout << "Shield deactivated.\n";
-        }
+void Cheeseburger::activateSpeedBoost() {
+    if (!speedBoostActive) {
+        speedBoostActive = true;
+        speed = 8; // Set high speed for the boost
+        std::cout << "Speed Boost Activated! Speed increased to 8.\n";
+
+        // Start a timer to deactivate the speed boost after 5 seconds
+        std::thread([this]() {
+            std::this_thread::sleep_for(std::chrono::seconds(5));
+            deactivateSpeedBoost();
+            }).detach();
     }
-    return shieldTimer; // Return the remaining shield time
 }
+
+// Deactivate speed boost
+void Cheeseburger::deactivateSpeedBoost() {
+    speedBoostActive = false;
+    speed = 1; // Reset to default speed
+    std::cout << "Speed Boost Deactivated. Speed reset to 1.\n";
+}
+
+// Check if speed boost is active
+bool Cheeseburger::isSpeedBoostActive() const {
+    return speedBoostActive;
+}
+
 // Activate shield and set timer
 void Cheeseburger::activateShield() {
-    shieldActive = true;
-    shieldTimer = 10; // Set shield duration to 10 seconds
-    std::cout << "Shield activated! Lives are protected for 10 seconds.\n";
+    if (!shieldActive) {
+        shieldActive = true;
+        std::cout << "Shield activated! Burger is protected for 10 seconds.\n";
+
+        // Start a timer to deactivate the shield after 10 seconds
+        std::thread([this]() {
+            std::this_thread::sleep_for(std::chrono::seconds(10));
+            deactivateShield();
+            }).detach();
+    }
+}
+void Cheeseburger::deactivateShield() {
+    shieldActive = false;
+    std::cout << "Shield deactivated! Burger is no longer protected.\n";
 }
 // Update shield status in real time
 int Cheeseburger::updateShield() {

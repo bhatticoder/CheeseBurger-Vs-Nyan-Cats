@@ -36,6 +36,14 @@ void NyanCat::move(char direction) {
         if (player_col < cols - 4) player_col++;
     }
 }
+void NyanCat::displayStatus() {
+    system("clear"); // Clear the console screen (use "cls" on Windows)
+    std::cout << "Score: " << burger->getScore()
+        << " | Lives: " << burger->getLives()
+        << " | Shield: " << (burger->isShieldActive() ? "Active" : "Inactive")
+        << " | Speed Booster: " << (burger->isSpeedBoostActive() ? "Active" : "Inactive")
+        << "\n";
+}
 bool NyanCat::collide(GameObject* collideobject) {
     for (int i = 0; i < maxCats; ++i) {
         if (cats[i].row == rows - 2 && cats[i].col >= player_col && cats[i].col < player_col + 4) {
@@ -70,13 +78,10 @@ void RegularNyanCat::fall() {
     powerUp->fall();
     multiplier->fall();
     booster->fall();
-    // Handle PowerUp collision with cats
-    for (int i = 0; i < maxCats; ++i) {
-        if (powerUp->collidesWith(cats[i].row, cats[i].col)) {
-            powerUp->initialize();  // Reset power-up
-            burger->activateShield();  // Activate shield upon collision
-            break;
-        }
+    if (powerUp->collidesWith(rows - 2, player_col)) {
+        powerUp->initialize();  // Reset shield position
+        powerUp->activateShield(burger);  // Activate shield on collision
+        std::cout << "Shield picked up! Burger is now protected for 10 seconds.\n";
     }
     // Check multiplier collision
     if (multiplier->collidesWith(rows - 2, player_col)) {
@@ -84,19 +89,9 @@ void RegularNyanCat::fall() {
         burger->updateScore(100);  // Boost score
     }
     // Check SpeedBooster collision with the Cheeseburger
-    if (booster->collidesWith(player_row, player_col)) {
-        booster->activateSpeedBoost(burger);  // Boost the burger's speed
-        while (burger->getLives() <= 0) {
-            if (_kbhit()) {
-                char input = _getch();
-                if (input == 'a' || input == 'A') {
-                    burger->move(input); // Move left if 'A' is pressed
-                }
-                else if (input == 'd' || input == 'D') {
-                    burger->move(input); // Move right if 'D' is pressed
-                }
-            }
-        }
+    if (booster->collidesWith(rows - 2, player_col)) {
+        booster->initialize();  // Reset booster position
+        booster->activateSpeedBoost(burger);  // Activate speed boost on collision
     }
 }
 bool RegularNyanCat::collide(GameObject* collideobject) {
@@ -140,7 +135,7 @@ void SuperNyanCat::fall() {
         if (cats[i].row >= rows - 1) {
             cats[i].row = -1; // Reset position to the top after it falls
             cats[i].col = rand() % (cols - 2) + 1;  // Random column
-            burger->updateScore(10);  // Add points for each falling NyanCat
+            burger->updateScore(15);  // Add points for each falling NyanCat
         }
         else {
             cats[i].row++;  // Move down one row
@@ -152,15 +147,11 @@ void SuperNyanCat::fall() {
     multiplier->fall();
     booster->fall();
 
-    // Handle PowerUp collision with cats
-    for (int i = 0; i < maxCats; ++i) {
-        if (powerUp->collidesWith(cats[i].row, cats[i].col)) {
-            powerUp->initialize();  // Reset power-up
-            burger->activateShield();  // Activate shield upon collision
-            break;
-        }
+    if (powerUp->collidesWith(rows - 2, player_col)) {
+        powerUp->initialize();  // Reset shield position
+        powerUp->activateShield(burger);  // Activate shield on collision
+        std::cout << "Shield picked up! Burger is now protected for 10 seconds.\n";
     }
-
     // Check multiplier collision
     if (multiplier->collidesWith(rows - 2, player_col)) {
         multiplier->initialize();  // Reset multiplier
@@ -168,19 +159,9 @@ void SuperNyanCat::fall() {
     }
 
     // Check SpeedBooster collision with the Cheeseburger
-    if (booster->collidesWith(player_row, player_col)) {
-        booster->activateSpeedBoost(burger);  // Boost the burger's speed
-        while (burger->getLives() <= 0) {
-            if (_kbhit()) {
-                char input = _getch();
-                if (input == 'a' || input == 'A') {
-                    burger->move(input); // Move left if 'A' is pressed
-                }
-                else if (input == 'd' || input == 'D') {
-                    burger->move(input); // Move right if 'D' is pressed
-                }
-            }
-        }
+    if (booster->collidesWith(rows - 2, player_col)) {
+        booster->initialize();  // Reset booster position
+        booster->activateSpeedBoost(burger);  // Activate speed boost on collision
     }
 }
 
@@ -218,54 +199,53 @@ void SuperNyanCat::draw() {
 //////////////////////////////|Mega Nyan Cat Implementation|///////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////
 MegaNyanCat::MegaNyanCat(int startRow, int startCol, int speed, Cheeseburger* burger, shield* powerUp, ScoreMultiplier* multiplier, SpeedBooster* booster)
-    : NyanCat(startRow, startCol, speed, burger, powerUp, multiplier, booster) {}
+    : NyanCat(startRow, startCol, speed, burger, powerUp, multiplier, booster) {
+}
+
 void MegaNyanCat::fall() {
-    // Update cats falling
     for (int i = 0; i < maxCats; ++i) {
-        if (cats[i].row >= rows - 1) {
-            cats[i].row = -1; // Reset position to the top after it falls
+        if (cats[i].row >= rows - 2) {  // Check if the cat reaches the bottom
+            cats[i].row = -1;  // Reset position to the top after it falls
             cats[i].col = rand() % (cols - 2) + 1;  // Random column
             burger->updateScore(10);  // Add points for each falling NyanCat
         }
         else {
             cats[i].row++;  // Move down one row
         }
+
+        // Add individual teleportation while falling
+        if (rand() % 10 == 0) { // 1 in 10 chance
+            cats[i].col = rand() % (cols - 2) + 1; // Random column
+            cats[i].row = rand() % 5;              // Random row (near the top)
+        }
     }
+
+    // Group teleportation
+
 
     // Power-ups, multipliers, and speed booster should fall as well
     powerUp->fall();
     multiplier->fall();
     booster->fall();
 
-    // Handle PowerUp collision with cats
-    for (int i = 0; i < maxCats; ++i) {
-        if (powerUp->collidesWith(cats[i].row, cats[i].col)) {
-            powerUp->initialize();  // Reset power-up
-            burger->activateShield();  // Activate shield upon collision
-            break;
-        }
+    if (powerUp->collidesWith(rows - 2, player_col)) {
+        powerUp->initialize();  // Reset shield position
+        powerUp->activateShield(burger);  // Activate shield on collision
+        std::cout << "Shield picked up! Burger is now protected for 10 seconds.\n";
     }
     // Check multiplier collision
     if (multiplier->collidesWith(rows - 2, player_col)) {
         multiplier->initialize();  // Reset multiplier
         burger->updateScore(100);  // Boost score
     }
+
     // Check SpeedBooster collision with the Cheeseburger
-    if (booster->collidesWith(player_row, player_col)) {
-        booster->activateSpeedBoost(burger);  // Boost the burger's speed
-        while (burger->getLives() <= 0) {
-            if (_kbhit()) {
-                char input = _getch();
-                if (input == 'a' || input == 'A') {
-                    burger->move(input); // Move left if 'A' is pressed
-                }
-                else if (input == 'd' || input == 'D') {
-                    burger->move(input); // Move right if 'D' is pressed
-                }
-            }
-        }
+    if (booster->collidesWith(rows - 2, player_col)) {
+        booster->initialize();  // Reset booster position
+        booster->activateSpeedBoost(burger);  // Activate speed boost on collision
     }
 }
+
 bool MegaNyanCat::collide(GameObject* collideobject) {
     // Check for collision with the Cheeseburger (player)
     for (int i = 0; i < maxCats; ++i) {
@@ -282,15 +262,25 @@ bool MegaNyanCat::collide(GameObject* collideobject) {
             cats[i].col = rand() % (cols - 2) + 1;
         }
     }
-    teleport();
     return false; // Default return value for no collision
 }
 void MegaNyanCat::teleport() {
     for (int i = 0; i < maxCats; ++i) {
-        cats[i].col = rand() % (cols - 2) + 1;
-        cats[i].row = rand() % 5;  // Random row, simulate teleportation
+        // Each cat has a 20% chance to teleport randomly during its fall
+        if (rand() % 5 == 0) { // 1 in 5 chance
+            cats[i].col = rand() % (rows - 2) + 1; // Random column
+            cats[i].row = rand() % 5;              // Random row (near the top)
+        }
+    }
+    // Group teleportation: Occasionally teleport all cats together
+    if (rand() % 10 == 0) { // 1 in 10 chance
+        for (int i = 0; i < maxCats; ++i) {
+            cats[i].col = rand() % (rows - 2) + 1; // Random column
+            cats[i].row = rand() % 5;              // Random row (near the top)
+        }
     }
 }
+
 void MegaNyanCat::draw() {
     // Draw the game objects (cats, power-ups, cheeseburger, speed booster)
     for (int i = 0; i < rows; ++i) {
