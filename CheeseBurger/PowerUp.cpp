@@ -69,7 +69,9 @@ int ScoreMultiplier::getCol() const {
 }
 //////////////////////////////////////////////////////////////
 SpeedBooster::SpeedBooster(int totalRows, int totalCols)
-    : GameObject(-1, rand() % (totalCols - 2) + 1, totalRows, totalCols) {}
+    : GameObject(-1, rand() % (totalCols - 2) + 1, totalRows, totalCols),
+    row(-1), col(rand() % (totalCols - 2) + 1) {}
+
 void SpeedBooster::initialize() {
     row = -1;                      // Start above the screen
     col = rand() % (cols - 2) + 1; // Randomize the column

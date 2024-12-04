@@ -60,8 +60,10 @@ bool NyanCat::collide(GameObject* collideobject) {
 ////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////|Regular Nyan Cat Implementation|////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////
-RegularNyanCat::RegularNyanCat(int startRow, int startCol, int speed, Cheeseburger* burger, shield* powerUp, ScoreMultiplier* multiplier, SpeedBooster* booster)
-    : NyanCat(startRow, startCol, speed, burger, powerUp, multiplier, booster) {}
+RegularNyanCat::RegularNyanCat(int param1, int param2, int param3, Cheeseburger* burger, shield* shld, ScoreMultiplier* multiplier, SpeedBooster* booster)
+    : NyanCat(param1, param2, param3, burger, shld, multiplier, booster) {
+    // Initialization logic here
+}
 void RegularNyanCat::fall() {
     // Update cats falling
     for (int i = 0; i < maxCats; ++i) {
