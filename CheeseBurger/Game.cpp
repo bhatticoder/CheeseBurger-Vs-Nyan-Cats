@@ -89,8 +89,7 @@ void Game::displayCredits() {
     std::cout << "=============================\n";
     std::cout << " Credits\n";
     std::cout << "=============================\n";
-    std::cout << "Muhammad Talha   23F-0511\n";
-    std::cout << "Abdul Rafay      23F-0511\n";
+    std::cout << "Muhammad Mudasar Bhatti\n";
     std::cout << "=============================\n";
     std::cout << "Press Enter to return to the main menu...";
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
