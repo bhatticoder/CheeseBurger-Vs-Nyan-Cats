@@ -6,30 +6,29 @@
 #include <thread>    // For std::this_thread::sleep_for
 #include <chrono>    // For std::chrono::milliseconds
 #include <limits>    // For std::numeric_limits
+#undef max
 const int gridCols = 20;
 const int gridRows = 20;
 const int NUM_SCORES = 5;  // Number of top scores to store
 Game::Game() : easyHighScores{ 0 }, mediumHighScores{ 0 }, hardHighScores{ 0 } {
+    obj = nullptr;
     loadHighScores();
 }
 Game::~Game() {
     saveHighScores(); // Ensure high scores are saved when the object is destroyed
 }
-//void Game::setConsoleSize(int width, int height) {
-//    std::string command = "mode con: cols=" + std::to_string(width) + " lines=" + std::to_string(height);
-//    system(command.c_str());
-//}
 void Game::displayMainMenu() {
     system("cls");
-    std::cout << "==========================================\n";
-    std::cout << " Welcome to Cheeseburger vs. Nyan Cats!\n";
-    std::cout << "==========================================\n";
-    std::cout << "1. Start Game\n";
-    std::cout << "2. Instructions\n";
-    std::cout << "3. High Scores\n";
-    std::cout << "4. Credits\n";
-    std::cout << "5. Exit\n";
-    std::cout << "Select your option: ";
+    obj->printColored("==========================================\n", MAGENTA);
+    obj->printColored(" Welcome to Cheeseburger vs. Nyan Cats!\n", GREEN);
+    obj->printColored("==========================================\n", MAGENTA);
+    obj->printColored("1. Start Game\n", RED);
+    obj->printColored("2. Instructions\n", RED);
+    obj->printColored("3. High Scores\n", RED);
+    obj->printColored("4. Credits\n", RED);
+    obj->printColored("5. Exit\n", RED);
+    obj->printColored("Select your option: \n", RED);
+    obj->printColored("==========================================\n", MAGENTA);
 }
 void Game::displayLevelMenu() {
     system("cls");
@@ -203,9 +202,9 @@ void Game::startGame(int mode) {
     try {
         while (burger.getLives() > 0) {
             // Clear the screen
-            system("cls");
+            SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), { 0,0 });
             // Display game status
-            cout << "CHEESE BURGER VS NYAN CAT\n";
+            std::cout << "CHEESE BURGER VS NYAN CAT\n";
             nyanCat->displayStatus();
             std::cout << "Mode: " << modeName << "\n"; // Display the mode name
             std::cout << "Speed Boost: " << (burger.isSpeedBoostActive() ? "Active" : "Inactive") << "\n"; // Show speed boost status
@@ -220,9 +219,8 @@ void Game::startGame(int mode) {
                 char input = _getch();
                 if (input == 'q' || input == 'Q') break; // Quit game
                 if (input == 27) pauseMenu();           // Pause menu (ESC key)
-                else nyanCat->move(input);              // Move based on user input
+                nyanCat->move(input);
             }
-
             // Game delay to control frame rate
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
         }
